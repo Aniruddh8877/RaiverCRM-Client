@@ -13,6 +13,31 @@ export class AppService {
   constructor(private http: HttpClient) {
   }
 
+  getLeadCategoryList(obj:any){
+    return this.http.post(this.apiUrl+"LeadCategroy/LeadCategoryList",obj,{headers: this.headers})
+  }
+  SaveLeadCategory(obj:any){
+    return this.http.post(this.apiUrl+"LeadCategroy/SaveLeadCategory",obj,{headers: this.headers})
+  }
+  DeleteLeadCategory(obj:any){
+    return this.http.post(this.apiUrl+"LeadCategroy/DeleteLeadCategory",obj,{headers: this.headers})
+  }
+  ///////////////////////////////////////////////
+
+  getLeadAssignList(obj:any){
+    return this.http.post(this.apiUrl+"LeadAssign/LeadAssignList",obj,{headers: this.headers})
+  }
+  SaveLeadAssign(obj:any){
+    return this.http.post(this.apiUrl+"LeadAssign/SaveLeadAssign",obj,{headers: this.headers})
+  }
+  DeleteLeadAssign(obj:any){
+    return this.http.post(this.apiUrl+"LeadAssign/DeleteLeadAssign",obj,{headers: this.headers})
+  }
+
+
+
+
+
   getImageUrl(): string {
     return ConstantData.getBaseUrl();
   }

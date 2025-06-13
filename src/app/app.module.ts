@@ -37,6 +37,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { LeadCategoryComponent } from './admin/lead-category/lead-category.component';
+import { LeadAssignComponent } from './admin/lead-assign/lead-assign.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,9 @@ import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerMod
     StaffComponent,
     OrderByPipe,
     FilterPipe,
-    CompanyComponent
+    CompanyComponent,
+    LeadCategoryComponent,
+    LeadAssignComponent
   ],
   imports: [
     BrowserModule,

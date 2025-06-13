@@ -14,12 +14,13 @@
     </div>
     <div class="col-sm-4">
       <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
-        (click)="newDesignation()">New
-        Designation</button>
+        (click)="newLeadCategory()">New
+        Lead Category </button>
     </div>
   </div>
 
-  <section class="section dashboard">
+
+ <section class="section dashboard">
     <div class="card">
       <div class="card-body ">
         <div class="table-container overflow-auto">
@@ -40,7 +41,7 @@
             <thead>
               <tr>
                 <th>S.No</th>
-                <th style="cursor:pointer;" (click)="sort('DesignationName')">Designation</th>
+                <th style="cursor:pointer;" (click)="sort('LeadCategoryName')">Lead Category Name</th>
                 <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
                 <th *ngIf="action.CanEdit">Edit</th>
                 <th *ngIf="action.CanDelete">Delete</th>
@@ -48,9 +49,9 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let item of DesignationList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                *ngFor="let item of LeadCategoryList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
                 <td>{{(itemPerPage * (p -1)) +i+ 1}}</td>
-                <td>{{item.DesignationName}}</td>
+                <td>{{item.LeadCategoryName}}</td>
                 <td>
                   <span class="p-1" [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
                     {{AllStatusList[item.Status]}}
@@ -58,12 +59,12 @@
                 </td>
                 <td *ngIf="action.CanEdit">
                   <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                    (click)="editDesignation(item)">
+                    (click)="editLeadCategory(item)">
                     <i class="bi bi-pencil-square"></i>
                   </button>
                 </td>
                 <td *ngIf="action.CanDelete">
-                  <button class="btn btn-sm btn-danger" (click)="deleteDesignation(item)">
+                  <button class="btn btn-sm btn-danger" (click)="DeleteLeadCategory(item)">
                     <i class="bi bi-trash-fill"></i>
                   </button>
                 </td>
@@ -79,34 +80,35 @@
     </div>
 
   </section>
-  
+
+
   <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Designation.DesignationId > 0 ? 'Update':'New'}}
-            Designation
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">{{LeadCategory.LeadCategoryId > 0 ? 'Update':'New'}}
+           Lead Category
           </h1>
           <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form #formDesignation="ngForm" class="d-flex justify-content-evenly flex-wrap">
+          <form #formLeadCategory="ngForm" class="d-flex justify-content-evenly flex-wrap">
             <div class="container">
               <div class="row">
 
                 <mat-form-field appearance="outline" class="col-sm-6">
-                  <mat-label>Designation Name</mat-label>
-                  <input matInput #DesignationName="ngModel" name="DesignationName"
-                    [(ngModel)]="Designation.DesignationName" required autofocus>
+                  <mat-label>Lead Category Name</mat-label>
+                  <input matInput #LeadCategoryName="ngModel" name="LeadCategoryName"
+                    [(ngModel)]="LeadCategory.LeadCategoryName" required autofocus>
                   <mat-error>
-                    Designation name is <strong>required</strong>
+                    Lead Category name is <strong>required</strong>
                   </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="col-sm-6">
                   <mat-label>Status</mat-label>
-                  <mat-select #Status="ngModel" name="Status" [(ngModel)]="Designation.Status" required>
+                  <mat-select #Status="ngModel" name="Status" [(ngModel)]="LeadCategory.Status" required>
                     <mat-option [value]="status.Key" *ngFor="let status of StatusList">{{status.Value}}</mat-option>
                   </mat-select>
                   <mat-error>
@@ -122,10 +124,10 @@
         <div class="modal-footer mt-2">
           <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
             (click)="resetForm()">Cancel</button>
-          <button class="btn btn-primary" (click)="saveDesignation()">{{Designation.DesignationId >
+          <button class="btn btn-primary" (click)="SaveLeadCategory()">{{LeadCategory.LeadCategoryId >
             0 ? 'Update':'Add'}}</button>
         </div>
       </div>
     </div>
   </div>
-</main>
+  </main>
