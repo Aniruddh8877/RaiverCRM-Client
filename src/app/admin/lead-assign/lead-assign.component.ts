@@ -16,7 +16,7 @@ declare var $: any;
   styleUrls: ['./lead-assign.component.css']
 })
 export class LeadAssignComponent {
-dataLoading: boolean = false
+  dataLoading: boolean = false
   LeadAssignList: any = [];
   LeadAssign: any = {};
   isSubmitted = false
@@ -30,11 +30,12 @@ dataLoading: boolean = false
   itemPerPage: number = this.PageSize[0];
   userDetail: any = {};
   action: ActionModel = {} as ActionModel;
- staffLogin: StaffLoginModel = {} as StaffLoginModel;
- LeadCategoryList:any=[];
+  staffLogin: StaffLoginModel = {} as StaffLoginModel;
+  LeadCategoryList: any = [];
+  Filter: any = {};
 
 
- constructor(
+  constructor(
     private service: AppService,
     private toastr: ToastrService,
     private localService: LocalService,
@@ -42,18 +43,20 @@ dataLoading: boolean = false
     private router: Router
   ) { }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.staffLogin = this.localService.getEmployeeDetail();
+    this.LeadAssign.StaffId = this.staffLogin.StaffId;
+    // this.Filter.RoleId = this.staffLogin.RoleId;
     this.validiateMenu();
-     this.getStaffList();
-    this. getLeadCategoryList();
+    this.getStaffList();
+    this.getLeadCategoryList();
     this.getLeadAssignList();
     this.resetForm();
   }
 
- validiateMenu() {
+  validiateMenu() {
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ Url: this.router.url,StaffLoginId:this.staffLogin.StaffLoginId })).toString()
+      request: this.localService.encrypt(JSON.stringify({ Url: this.router.url, StaffLoginId: this.staffLogin.StaffLoginId })).toString()
     }
     this.dataLoading = true
     this.service.validiateMenu(obj).subscribe((response: any) => {
@@ -66,7 +69,7 @@ dataLoading: boolean = false
   }
 
 
- sort(key: any) {
+  sort(key: any) {
     this.sortKey = key;
     this.reverse = !this.reverse;
   }
@@ -84,15 +87,19 @@ dataLoading: boolean = false
 
 
 
-newLeadAssign() {
+  newLeadAssign() {
     this.resetForm();
     $('#modal_popup').modal('show')
   }
 
 
- getLeadAssignList() {
+  getLeadAssignList() {
+    var data = {
+      StaffId: this.staffLogin.StaffId,
+
+    }
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ })).toString()
+      request: this.localService.encrypt(JSON.stringify(data)).toString()
     }
     this.dataLoading = true
     this.service.getLeadAssignList(obj).subscribe(r1 => {
@@ -109,7 +116,7 @@ newLeadAssign() {
     }))
   }
 
-SaveLeadAssign() {
+  SaveLeadAssign() {
 
     this.formLeadAssign.control.markAllAsTouched();
     this.isSubmitted = true
@@ -117,10 +124,10 @@ SaveLeadAssign() {
       this.toastr.error("Fill all the required fields !!")
       return
     }
-     this.LeadAssign.CreatedBy = this.staffLogin.StaffLoginId;
-    // this.LeadAssign.UpdatedBy = this.staffLogin.StaffLoginId;
+    this.LeadAssign.CreatedBy = this.staffLogin.StaffLoginId;
+    this.LeadAssign.LeadDate = this.loadData.loadDateYMD(this.LeadAssign.LeadDate);
     console.log(this.LeadAssign);
-    
+
     var obj: RequestModel = {
       request: this.localService.encrypt(JSON.stringify(this.LeadAssign)).toString()
     }
@@ -146,49 +153,49 @@ SaveLeadAssign() {
     }))
   }
 
-DeleteLeadAssign(obj: any) {
-  if (confirm("Are you sure you want to delete this record?")) {
-    const request: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify(obj)).toString()
-    };
+  DeleteLeadAssign(obj: any) {
+    if (confirm("Are you sure you want to delete this record?")) {
+      const request: RequestModel = {
+        request: this.localService.encrypt(JSON.stringify(obj)).toString()
+      };
 
-    this.dataLoading = true;
+      this.dataLoading = true;
 
-    this.service.DeleteLeadAssign(request).subscribe(
-      (r1: any) => {
-        const response = r1;
-        if (response.Message === ConstantData.SuccessMessage) {
-          this.toastr.success("Record deleted successfully");
-          this.getLeadAssignList();
-        } else {
-          this.toastr.error(response.Message);
+      this.service.DeleteLeadAssign(request).subscribe(
+        (r1: any) => {
+          const response = r1;
+          if (response.Message === ConstantData.SuccessMessage) {
+            this.toastr.success("Record deleted successfully");
+            this.getLeadAssignList();
+          } else {
+            this.toastr.error(response.Message);
+          }
+          this.dataLoading = false;
+        },
+        (err) => {
+          this.toastr.error("Error occurred while deleting the record");
+          this.dataLoading = false;
         }
-        this.dataLoading = false;
-      },
-      (err) => {
-        this.toastr.error("Error occurred while deleting the record");
-        this.dataLoading = false;
-      }
-    );
+      );
+    }
   }
-}
 
 
 
-editLeadAssign(obj: any) {
-  this.resetForm();
-  this.LeadAssign = { ...obj };
-  if (this.LeadAssign.LeadDate) {
-    this.LeadAssign.LeadDate = new Date(this.LeadAssign.LeadDate);
+  editLeadAssign(obj: any) {
+    this.resetForm();
+    this.LeadAssign = { ...obj };
+    if (this.LeadAssign.LeadDate) {
+      this.LeadAssign.LeadDate = new Date(this.LeadAssign.LeadDate);
+    }
+    $('#modal_popup').modal('show');
   }
-  $('#modal_popup').modal('show');
-}
 
 
 
- getLeadCategoryList() {
+  getLeadCategoryList() {
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ })).toString()
+      request: this.localService.encrypt(JSON.stringify({})).toString()
     }
     this.dataLoading = true
     this.service.getLeadCategoryList(obj).subscribe(r1 => {
@@ -205,25 +212,68 @@ editLeadAssign(obj: any) {
     }))
   }
 
-StaffList: any[] = [];
+  StaffList: any[] = [];
 
-getStaffList() {
-  const obj: RequestModel = {
-    request: this.localService.encrypt(JSON.stringify({})).toString()
-  };
-  this.dataLoading = true;
-  this.service.getStaffList(obj).subscribe(r1 => {
-    let response = r1 as any;
-    if (response.Message === ConstantData.SuccessMessage) {
-      this.StaffList = response.StaffList;
-    } else {
-      this.toastr.error(response.Message);
-    }
-    this.dataLoading = false;
-  }, err => {
-    this.toastr.error("Error while fetching staff list");
-    this.dataLoading = false;
-  });
+  getStaffList() {
+    const obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify({})).toString()
+    };
+    this.dataLoading = true;
+    this.service.getStaffList(obj).subscribe(r1 => {
+      let response = r1 as any;
+      if (response.Message === ConstantData.SuccessMessage) {
+        this.StaffList = response.StaffList;
+      } else {
+        this.toastr.error(response.Message);
+      }
+      this.dataLoading = false;
+    }, err => {
+      this.toastr.error("Error while fetching staff list");
+      this.dataLoading = false;
+    });
+  }
+
+
+  imageUrl = ConstantData.getBaseUrl();
+  AttachmentsPhoto: any;
+  setAttachments(event: any) {
+  var file: File = event.target.files[0];
+  if (!ConstantData.allowedFileTypes.includes(file.type)) {
+    this.toastr.error("Invalid file format !!");
+    this.LeadAssign.Attachments = '';
+    this.LeadAssign.AttachmentsName = '';
+    return;
+  }
+
+  if (file.size < 512000) {
+    this.LeadAssign.AttachmentsName = file.name;
+    this.LeadAssign.FileFormat = ConstantData.getFileExtension(file.name);
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.addEventListener('load', (e1: any) => {
+      var dataUrl = e1.target.result;
+      var base64Data: string = dataUrl.substr(dataUrl.indexOf('base64,') + 'base64,'.length);
+      this.LeadAssign.Attachments = base64Data;
+
+      if (file.type.startsWith('image/')) {
+        this.AttachmentsPhoto = `data:${file.type};base64,${base64Data}`;
+      } else if (file.type == 'application/pdf') {
+        this.AttachmentsPhoto = 'assets/pdf-icon.png';  // ✅ Use some PDF icon for display
+      } else {
+        this.AttachmentsPhoto = 'assets/file-icon.png';  // ✅ Generic icon for DOC/DOCX
+      }
+    });
+
+  } else {
+    this.LeadAssign.Attachments = '';
+    this.LeadAssign.AttachmentsName = '';
+    this.toastr.error("File size should be less than 500 KB.");
+  }
 }
+
+
+
+
 
 }

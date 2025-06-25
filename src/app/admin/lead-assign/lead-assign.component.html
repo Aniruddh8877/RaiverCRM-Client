@@ -42,6 +42,8 @@
                 <th style="cursor:pointer;" (click)="sort('LeadDate')">Lead Date</th>
                 <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Category Name</th>
                 <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Details </th>
+                <th >File </th>
+
                 <th style="cursor:pointer;" (click)="sort('Instruction')">Instruction</th>
                 <!-- <th style="cursor:pointer;" (click)="sort('LeadAssignName')">Lead Assign Name</th>
                 <th style="cursor:pointer;" (click)="sort('LeadAssignName')">Lead Assign Name</th> -->
@@ -55,9 +57,11 @@
                 *ngFor="let item of LeadAssignList | filter:Search | orderBy:sortKey:reverse | paginate: { itemsPerPage: itemPerPage, currentPage: p }; let i = index;">
                 <td>{{ (itemPerPage * (p - 1)) + i + 1 }}</td>
                 <td>{{ item.StaffName }}</td>
-                <td>{{ item.LeadDate }}</td>
+                <td>{{ item.LeadDate | date:"dd-MM-yy" }}</td>
                 <td>{{ item.LeadCategoryName }}</td>
                 <td>{{ item.LeadDetail }}</td>
+                <td><a [href]="imageUrl + item.Attachments" target="_blank"
+                                                style="color:darkgoldenrod">View Attachment</a></td>
                 <td>{{ item.Instruction }}</td>
                 <td>
                   <span class="p-1" [ngClass]="item.Status == 1 ? 'badge text-bg-success' : 'badge text-bg-danger'">
@@ -89,7 +93,7 @@
   <!-- Modal -->
   <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static"
     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ LeadAssign.LeadId > 0 ? 'Update' : 'New' }} Lead
@@ -103,7 +107,7 @@
 
 
 
-                <mat-form-field appearance="outline" class="col-sm-6">
+                <mat-form-field appearance="outline" class="col-sm-4">
                   <mat-label>Staff Name</mat-label>
                   <mat-select name="StaffId" [(ngModel)]="LeadAssign.StaffId" #StaffId="ngModel" required>
                     <mat-option *ngFor="let Staff of StaffList" [value]="Staff.StaffId">
@@ -113,7 +117,7 @@
                   <mat-error *ngIf="isSubmitted">Staff name is <strong>required</strong></mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" class="col-sm-6">
+                <mat-form-field appearance="outline" class="col-sm-4">
                   <mat-label>Lead Date</mat-label>
                   <input matInput [matDatepicker]="picker" name="LeadDate" [(ngModel)]="LeadAssign.LeadDate" required />
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -122,7 +126,7 @@
                     <strong>required</strong></mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" class="col-sm-6">
+                <mat-form-field appearance="outline" class="col-sm-4">
                   <mat-label>Lead Category</mat-label>
                   <mat-select name="LeadCategoryId" [(ngModel)]="LeadAssign.LeadCategoryId" required>
                     <mat-option *ngFor="let cat of LeadCategoryList" [value]="cat.LeadCategoryId">
@@ -133,16 +137,28 @@
                     <strong>required</strong></mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" class="col-sm-6">
+                <mat-form-field appearance="outline" class="col-sm-12">
                   <mat-label>Lead Detail</mat-label>
-                  <textarea matInput #LeadDetail="ngModel" name="LeadDetail" [(ngModel)]="LeadAssign.LeadDetail" required style="resize: none;"></textarea>
+                  <textarea matInput #LeadDetail="ngModel" [rows]="6" name="LeadDetail" [(ngModel)]="LeadAssign.LeadDetail" required style="resize: none;"></textarea>
                   <mat-error>Lead Detail is <strong>required</strong></mat-error>
                 </mat-form-field>
+
+                <input accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" hidden #inputAttachments
+                                                [(ngModel)]="LeadAssign.Attachments" name="inputAttachments"
+                                                (change)="setAttachments($event)" type="file" id="file">
+                                            <mat-form-field appearance="outline" class="col-sm-6 file_input"
+                                                (click)="inputAttachments.click()">
+                                                <mat-label>Lead File</mat-label>
+                                                <input matInput readonly="true" name="AttachmentsName"
+                                                    [(ngModel)]="LeadAssign.AttachmentsName">
+                                                <button mat-icon-button
+                                                    matSuffix><mat-icon>attach_file</mat-icon></button>
+                                            </mat-form-field>
 
                 <mat-form-field appearance="outline" class="col-sm-6">
                   <mat-label>Instruction </mat-label>
                   <textarea matInput name="Instruction" #Instruction="ngModel" [(ngModel)]="LeadAssign.Instruction" style="resize: none;"
-                    required></textarea>
+                  ></textarea>
                   <mat-error>Instruction is <strong>required</strong></mat-error>
                 </mat-form-field>
 

@@ -27,4 +27,17 @@ export class ConstantData {
         return this.baseUrl + this.noImageUrl;
     }
 
+
+public static allowedFileTypes = [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ]; 
+     static getFileExtension(fileName: string): string {
+        const parts = fileName.split('.');
+        return `.${parts.length > 1 ? parts[parts.length - 1] : ''}`;
+      }
 }
