@@ -39,6 +39,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } f
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { LeadCategoryComponent } from './admin/lead-category/lead-category.component';
 import { LeadAssignComponent } from './admin/lead-assign/lead-assign.component';
+import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { LeadAssignComponent } from './admin/lead-assign/lead-assign.component';
     FilterPipe,
     CompanyComponent,
     LeadCategoryComponent,
-    LeadAssignComponent
+    LeadAssignComponent,
+    LeadDetailComponent
   ],
   imports: [
     BrowserModule,

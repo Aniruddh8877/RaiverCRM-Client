@@ -214,7 +214,8 @@
                                 <mat-form-field appearance="outline" class="col-sm-3 form-group">
                                     <mat-label>Mobile No</mat-label>
                                     <input type="number" matInput #MobileNo="ngModel" name="MobileNo"
-                                        [(ngModel)]="Staff.MobileNo" required autofocus>
+                                        [(ngModel)]="Staff.MobileNo" required autofocus maxlength="10"
+                                        pattern="[0-9]{10}">
                                     <!--<mat-icon matSuffix>phone</mat-icon>-->
                                     <mat-error
                                         *ngIf="(MobileNo.dirty  || MobileNo.touched) || (MobileNo.invalid && isSubmitted)">

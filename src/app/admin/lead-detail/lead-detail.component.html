@@ -1,0 +1,170 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+  <div class="row">
+    <div class="pagetitle dashboard col-sm-8">
+      <h1>{{action.MenuTitle}}</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+          <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+          <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+        </ol>
+      </nav>
+    </div>
+
+  </div>
+
+  <section class="section dashboard">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-container overflow-auto">
+          <div class="dataTable-top">
+            <div class="dataTable-dropdown d-flex">
+              <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                <option *ngFor="let option of PageSize" [value]="option">{{ option }}</option>
+              </select>
+              <span class="ms-2">Entries per page</span>
+            </div>
+            <div class="dataTable-search">
+              <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search" placeholder="Search..."
+                type="text">
+            </div>
+          </div>
+
+          <table class="table table-sm table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th style="cursor:pointer;" (click)="sort('staffId')">Lead Name</th>
+                <th style="cursor:pointer;" (click)="sort('LeadDate')">Lead Contact No.</th>
+                <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Comment</th>
+                <th style="cursor:pointer;" (click)="sort('LeadAssignName')">Remarks</th>
+                <th style="cursor:pointer;" (click)="sort('FollowUpDate')">Follow Up Date</th>
+                <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                <th *ngIf="action.CanEdit">Edit</th>
+                <!-- <th *ngIf="action.CanDelete">Delete</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let item of LeadDetailList | filter:Search | orderBy:sortKey:reverse | paginate: { itemsPerPage: itemPerPage, currentPage: p }; let i = index;">
+                <td>{{ (itemPerPage * (p - 1)) + i + 1 }}</td>
+                <td>{{ item.LeadName }}</td>
+                <td>{{ item.LeadMobileNo }}</td>
+                <td>{{ item.LeadComment }}</td>
+                <!-- <td>{{ item.LeadDetail }}</td> -->
+
+                <td>{{ item.Comment }}</td>
+                <td>{{item.FollowUpDate|date:"dd-MM-yy"}}</td>
+                <td>
+                  <span class="p-1" [ngClass]="item.LeadStatus == 1 ? 'badge text-bg-success' : 'badge text-bg-danger'">
+                    {{ AllStatusList[item.LeadStatus] }}
+                  </span>
+                </td>
+
+
+                <td *ngIf="action.CanEdit">
+                  <button class="btn btn-sm btn-warning" (click)="editLeadAssign(item)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+          <div class="dataTable-bottom">
+            <pagination-controls (pageChange)="p = $event" style="float:right;"
+              class="my-pagination"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static"
+  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          {{ LeadDetail.LeadDetailId > 0 ? 'Update' : 'New' }} Lead Detail
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetForm()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form #formLeadDetail="ngForm" class="row g-3">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Lead Name</mat-label>
+              <input matInput name="LeadName" [(ngModel)]="LeadDetail.LeadName" required autofocus>
+              <mat-error *ngIf="formLeadDetail.submitted && !LeadDetail.LeadName">Lead Name is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Lead Mobile No.</mat-label>
+              <input matInput name="LeadMobileNo" [(ngModel)]="LeadDetail.LeadMobileNo" required maxlength="10"
+                pattern="[0-9]{10}">
+              <mat-error *ngIf="formLeadDetail.submitted && !LeadDetail.LeadMobileNo">Mobile No. is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Lead Comment</mat-label>
+              <input matInput name="LeadComment" [(ngModel)]="LeadDetail.LeadComment" required>
+              <mat-error *ngIf="formLeadDetail.submitted && !LeadDetail.LeadComment">Lead Comment is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Comment</mat-label>
+              <input matInput name="Comment" [(ngModel)]="LeadDetail.Comment" required>
+              <mat-error *ngIf="formLeadDetail.submitted && !LeadDetail.Comment">Comment is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Status</mat-label>
+              <mat-select name="LeadStatus" [(ngModel)]="LeadDetail.LeadStatus" required>
+                <mat-option *ngFor="let status of StatusList" [value]="status.Key">
+                  {{ status.Value }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="formLeadDetail.submitted && !LeadDetail.LeadStatus">Status is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+              <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                    <mat-label>Join Date</mat-label>
+                                    <input matInput #FollowUpDate="ngModel" name="FollowUpDate" [(ngModel)]="LeadAssign.FollowUpDate"
+                                        required [matDatepicker]="JoinDatePicker">
+                                    <mat-datepicker-toggle matIconSuffix [for]="JoinDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #JoinDatePicker></mat-datepicker>
+                                    <mat-error
+                                        *ngIf="(FollowUpDate.dirty  || FollowUpDate.touched) || (FollowUpDate.invalid && isSubmitted)">
+                                        Join Date is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+          </div>
+
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="SaveLeadDetail()">
+          {{ LeadDetail.LeadDetailId > 0 ? 'Update' : 'Add' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>

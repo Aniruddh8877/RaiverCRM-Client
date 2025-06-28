@@ -19,6 +19,7 @@ import { ChangePasswordComponent } from './admin/change-password/change-password
 import { CompanyComponent } from './admin/company/company.component';
 import { LeadCategoryComponent } from './admin/lead-category/lead-category.component';
 import { LeadAssignComponent } from './admin/lead-assign/lead-assign.component';
+import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: "/admin-login", pathMatch: 'full' },
@@ -42,7 +43,8 @@ const routes: Routes = [
       { path: 'company', component: CompanyComponent },
       {path:'LeadCategory',component:LeadCategoryComponent},
       {path:'LeadAssign',component:LeadAssignComponent},
-      // {path:'',component:},
+      {path:'LeadDetail',component:LeadDetailComponent},
+      {path:'LeadDetail/:id',component:LeadDetailComponent},
       // {path:'',component:},
       // {path:'',component:},
       // {path:'',component:},

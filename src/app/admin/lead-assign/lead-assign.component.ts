@@ -33,6 +33,12 @@ export class LeadAssignComponent {
   staffLogin: StaffLoginModel = {} as StaffLoginModel;
   LeadCategoryList: any = [];
   Filter: any = {};
+  leadList: any[] = [];
+  LeadDetails: any = {
+    LeadName: '',
+    LeadMobileNo: '',
+    LeadComment: ''
+  };
 
 
   constructor(
@@ -77,12 +83,14 @@ export class LeadAssignComponent {
   @ViewChild('formLeadAssign') formLeadAssign: NgForm;
   resetForm() {
     this.LeadAssign = {};
+    this.leadList = [];
     if (this.formLeadAssign) {
       this.formLeadAssign.control.markAsPristine();
       this.formLeadAssign.control.markAsUntouched();
     }
     this.isSubmitted = false
     this.LeadAssign.Status = 1
+    this.LeadAssign.LeadDate = new Date();
   }
 
 
@@ -91,6 +99,13 @@ export class LeadAssignComponent {
     this.resetForm();
     $('#modal_popup').modal('show')
   }
+
+ viewLead(data: any) {
+  console.log("Navigating to LeadDetail with LeadId:", data.LeadId);
+  this.router.navigate(['/admin/lead-detail'], {
+    queryParams: { id: data.LeadId, redUrl: '/admin/lead-assign' }
+  });
+}
 
 
   getLeadAssignList() {
@@ -125,11 +140,18 @@ export class LeadAssignComponent {
       return
     }
     this.LeadAssign.CreatedBy = this.staffLogin.StaffLoginId;
+    // this.LeadAssign.CreatedOn = Date.now();
     this.LeadAssign.LeadDate = this.loadData.loadDateYMD(this.LeadAssign.LeadDate);
+    // this.LeadAssign.CreatedOn = this.loadData.loadDateYMD(this.LeadAssign.CreatedOn);
     console.log(this.LeadAssign);
+   var  payload ={
+      GetLeadAssign:this.LeadAssign,
+      GetLeadDetails: this.leadList,
+      
+    }
 
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify(this.LeadAssign)).toString()
+      request: this.localService.encrypt(JSON.stringify(payload)).toString()
     }
     this.dataLoading = true;
     this.service.SaveLeadAssign(obj).subscribe(r1 => {
@@ -272,8 +294,23 @@ export class LeadAssignComponent {
   }
 }
 
+  addLeadItem() {
+    if (this.LeadAssign.LeadName && this.LeadAssign.LeadMobileNo && this.LeadAssign.LeadComment) {
+      this.leadList.push({
+        LeadName: this.LeadAssign.LeadName,
+        LeadMobileNo: this.LeadAssign.LeadMobileNo,
+        LeadComment: this.LeadAssign.LeadComment
+      });
 
+      // Clear input fields after adding
+      this.LeadAssign.LeadName = '';
+      this.LeadAssign.LeadMobileNo = '';
+      this.LeadAssign.LeadComment = '';
+    }
+  }
 
-
+  removeLeadItem(index: number) {
+    this.leadList.splice(index, 1);
+  }
 
 }

@@ -89,3 +89,12 @@ export enum DocType {
     Excel = 3,
     Print = 4,
 }
+
+export enum LeadStatus
+    {
+        Pending =1,
+        Closed = 2,
+        FollowUp = 3,
+        NotInterest =4,
+        NotResponsed=5
+    }

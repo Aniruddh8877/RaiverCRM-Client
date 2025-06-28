@@ -41,13 +41,14 @@
                 <th style="cursor:pointer;" (click)="sort('staffId')">Staff Name</th>
                 <th style="cursor:pointer;" (click)="sort('LeadDate')">Lead Date</th>
                 <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Category Name</th>
-                <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Details </th>
-                <th >File </th>
+                <!-- <th style="cursor:pointer;" (click)="sort('Lead Category Name')">Lead Details </th> -->
+                <!-- <th>File </th> -->
 
                 <th style="cursor:pointer;" (click)="sort('Instruction')">Instruction</th>
                 <!-- <th style="cursor:pointer;" (click)="sort('LeadAssignName')">Lead Assign Name</th>
                 <th style="cursor:pointer;" (click)="sort('LeadAssignName')">Lead Assign Name</th> -->
                 <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                <th>View</th>
                 <th *ngIf="action.CanEdit">Edit</th>
                 <th *ngIf="action.CanDelete">Delete</th>
               </tr>
@@ -59,15 +60,24 @@
                 <td>{{ item.StaffName }}</td>
                 <td>{{ item.LeadDate | date:"dd-MM-yy" }}</td>
                 <td>{{ item.LeadCategoryName }}</td>
-                <td>{{ item.LeadDetail }}</td>
-                <td><a [href]="imageUrl + item.Attachments" target="_blank"
-                                                style="color:darkgoldenrod">View Attachment</a></td>
+                <!-- <td>{{ item.LeadDetail }}</td> -->
+                <!-- <td><a [href]="imageUrl + item.Attachments" target="_blank" style="color:darkgoldenrod">View
+                    Attachment</a></td> -->
                 <td>{{ item.Instruction }}</td>
                 <td>
                   <span class="p-1" [ngClass]="item.Status == 1 ? 'badge text-bg-success' : 'badge text-bg-danger'">
                     {{ AllStatusList[item.Status] }}
                   </span>
                 </td>
+
+                <td class="">
+                  <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                    [routerLink]="'/admin/LeadDetail/' + item.LeadId">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                </td>
+
+
                 <td *ngIf="action.CanEdit">
                   <button class="btn btn-sm btn-warning" (click)="editLeadAssign(item)">
                     <i class="bi bi-pencil-square"></i>
@@ -137,28 +147,76 @@
                     <strong>required</strong></mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" class="col-sm-12">
-                  <mat-label>Lead Detail</mat-label>
-                  <textarea matInput #LeadDetail="ngModel" [rows]="6" name="LeadDetail" [(ngModel)]="LeadAssign.LeadDetail" required style="resize: none;"></textarea>
-                  <mat-error>Lead Detail is <strong>required</strong></mat-error>
-                </mat-form-field>
+                <div class="card-body">
+                  <h5 class="card-title">Add Product</h5>
+
+                  <!-- Product Section Strart -->
+                  <form class="row g-3">
+                    <mat-form-field appearance="outline" class="col-sm-3">
+                      <mat-label>Lead Name</mat-label>
+                      <input matInput name="LeadName" [(ngModel)]="LeadAssign.LeadName" required>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="col-sm-3">
+                      <mat-label>Lead Mobile No</mat-label>
+                      <input matInput name="LeadMobileNo" [(ngModel)]="LeadAssign.LeadMobileNo" required maxlength="10"
+                        pattern="[0-9]{10}">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="col-sm-3">
+                      <mat-label>Lead Comment</mat-label>
+                      <input matInput name="LeadComment" [(ngModel)]="LeadAssign.LeadComment" required>
+                    </mat-form-field>
+
+                    <button mat-raised-button color="primary" type="button" (click)="addLeadItem()" class="col-sm-2">
+                      Add
+                    </button>
+                  </form>
+
+                  <!-- Lead List Table -->
+                  <div class="table-responsive mt-3" *ngIf="leadList.length > 0">
+                    <table class="table table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Lead Name</th>
+                          <th>Lead Mobile No</th>
+                          <th>Lead Comment</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let lead of leadList; let i = index">
+                          <td>{{ i + 1 }}</td>
+                          <td>{{ lead.LeadName }}</td>
+                          <td>{{ lead.LeadMobileNo }}</td>
+                          <td>{{ lead.LeadComment }}</td>
+                          <td>
+                            <button type="button" class="btn btn-sm btn-danger" (click)="removeLeadItem(i)">
+                              <i class="bi bi-trash-fill"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Product Section End -->
+                </div>
 
                 <input accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" hidden #inputAttachments
-                                                [(ngModel)]="LeadAssign.Attachments" name="inputAttachments"
-                                                (change)="setAttachments($event)" type="file" id="file">
-                                            <mat-form-field appearance="outline" class="col-sm-6 file_input"
-                                                (click)="inputAttachments.click()">
-                                                <mat-label>Lead File</mat-label>
-                                                <input matInput readonly="true" name="AttachmentsName"
-                                                    [(ngModel)]="LeadAssign.AttachmentsName">
-                                                <button mat-icon-button
-                                                    matSuffix><mat-icon>attach_file</mat-icon></button>
-                                            </mat-form-field>
+                  [(ngModel)]="LeadAssign.Attachments" name="inputAttachments" (change)="setAttachments($event)"
+                  type="file" id="file">
+                <mat-form-field appearance="outline" class="col-sm-6 file_input" (click)="inputAttachments.click()">
+                  <mat-label>Lead File</mat-label>
+                  <input matInput readonly="true" name="AttachmentsName" [(ngModel)]="LeadAssign.AttachmentsName">
+                  <button mat-icon-button matSuffix><mat-icon>attach_file</mat-icon></button>
+                </mat-form-field>
 
                 <mat-form-field appearance="outline" class="col-sm-6">
                   <mat-label>Instruction </mat-label>
-                  <textarea matInput name="Instruction" #Instruction="ngModel" [(ngModel)]="LeadAssign.Instruction" style="resize: none;"
-                  ></textarea>
+                  <textarea matInput name="Instruction" #Instruction="ngModel" [(ngModel)]="LeadAssign.Instruction"
+                    style="resize: none;"></textarea>
                   <mat-error>Instruction is <strong>required</strong></mat-error>
                 </mat-form-field>
 
