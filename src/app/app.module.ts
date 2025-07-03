@@ -40,6 +40,9 @@ import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerMod
 import { LeadCategoryComponent } from './admin/lead-category/lead-category.component';
 import { LeadAssignComponent } from './admin/lead-assign/lead-assign.component';
 import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
+import { LeaveRequestComponent } from './admin/leave-request/leave-request.component';
+import { LeaveDetailComponent } from './admin/leave-detail/leave-detail.component';
+import { ResignationRequestComponent } from './admin/resignation-request/resignation-request.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +71,10 @@ import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
     CompanyComponent,
     LeadCategoryComponent,
     LeadAssignComponent,
-    LeadDetailComponent
+    LeadDetailComponent,
+    LeaveRequestComponent,
+    LeaveDetailComponent,
+    ResignationRequestComponent
   ],
   imports: [
     BrowserModule,

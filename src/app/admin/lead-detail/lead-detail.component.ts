@@ -95,22 +95,23 @@ export class LeadDetailComponent {
   }
 
   @ViewChild('formLeadDetail') formLeadDetail: NgForm;
- resetForm() {
-  this.LeadDetail = {
-    LeadName: '',
-    LeadMobileNo: '',
-    LeadComment: '',
-    Comment: '',
-    LeadStatus: 1
-  };
-  if (this.formLeadDetail) {
-    this.formLeadDetail.resetForm();
+  resetForm() {
+    this.LeadDetail = {
+      LeadName: '',
+      LeadMobileNo: '',
+      LeadComment: '',
+      Comment: '',
+      LeadStatus: 1,
+      FollowUpDate: new Date(),
+    };
+    if (this.formLeadDetail) {
+      this.formLeadDetail.resetForm();
+    }
   }
-}
 
-  newLeadAssign(item:any) {
-    this.LeadDetail = { ...item };  // Autofill existing data for edit
-  $('#modal_popup').modal('show');
+  newLeadAssign(item: any) {
+    this.LeadDetail = { ...item };
+    $('#modal_popup').modal('show');
   }
 
 
@@ -127,11 +128,11 @@ export class LeadDetailComponent {
 
 
   getLeadDetailsList(leadId: any) {
-    //    console.log("Calling getLeadDetailsList with LeadId:", leadId);  
-    // if (!leadId) {
-    //   this.toastr.error("Lead Id not found!");
-    //   return;
-    // }
+    //  console.log("Calling getLeadDetailsList with LeadId:", leadId);  
+    if (!leadId) {
+      this.toastr.error("Lead Id not found!");
+      return;
+    }
 
     var obj: RequestModel = {
       request: this.localService.encrypt(JSON.stringify({ LeadId: leadId })).toString()
@@ -144,6 +145,7 @@ export class LeadDetailComponent {
         let response = r1;
         if (response.Message === ConstantData.SuccessMessage) {
           this.LeadDetailList = response.LeadDeatilList;
+          console.log("Fetched Lead Detail List:", this.LeadDetailList);
         } else {
           this.toastr.error(response.Message);
         }
@@ -156,74 +158,51 @@ export class LeadDetailComponent {
     );
   }
 
-// SaveLeadDetail() {
-//   console.log("Saving Lead Category with details:", this.LeadDetail);
-  
+  SaveLeadDetail() {
+    this.formLeadDetail.control.markAllAsTouched();
 
-//     this.formLeadDetail.control.markAllAsTouched();
-//     this.isSubmitted = true
-//     if (this.formLeadDetail.invalid) {
-//       this.toastr.error("Fill all the required fields !!")
-//       return
-//     }
-//      this.LeadDetail.CreatedBy = this.staffLogin.StaffLoginId;
-//     this.LeadDetail.UpdatedBy = this.staffLogin.StaffLoginId;
-//     console.log(this.LeadDetail);
-    
-//     var obj: RequestModel = {
-//       request: this.localService.encrypt(JSON.stringify(this.LeadDetail)).toString()
-//     }
-//     this.dataLoading = true;
-//     this.service.SaveLeadDetail(obj).subscribe(r1 => {
-//       let response = r1 as any
-//       if (response.Message == ConstantData.SuccessMessage) {
-//         if (this.LeadDetail.LeadDetailId > 0) {
-//           this.toastr.success("Lead Category Updated successfully")
-//           $('#modal_popup').modal('hide')
-//         } else {
-//           this.toastr.success("Lead Category added successfully")
-//         }
-//         this.resetForm()
-//         this.getLeadDetailsList(obj);
-//       } else {
-//         this.toastr.error(response.Message)
-//       }
-//       this.dataLoading = false;
-//     }, (err => {
-//       this.toastr.error("Error occured while submitting data")
-//       this.dataLoading = false;
-//     }))
-//   }
-
-SaveLeadDetail() {
-  // this.formLeadDetail.control.markAllAsTouched();
-  
-  // if (this.formLeadDetail.invalid) {
-  //   this.toastr.error('Please fill all required fields!');
-  //   return;
-  // }
-  console.log("Saving Lead Detail with details:", this.LeadDetail);
-  
-
-  let payload = {
-    request: this.localService.encrypt(JSON.stringify(this.LeadDetail)).toString()
-  };
-
-  this.dataLoading = true;
-  this.service.SaveLeadDetail(payload).subscribe((response: any) => {
-    if (response.Message === ConstantData.SuccessMessage) {
-      this.toastr.success(this.LeadDetail.LeadDetailId > 0 ? 'Lead Detail Updated' : 'Lead Detail Added');
-      $('#modal_popup').modal('hide');
-      this.getLeadDetailsList(this.LeadDetail.LeadId); // Refresh table
-      this.resetForm();
-    } else {
-      this.toastr.error(response.Message);
+    if (!this.LeadDetail.LeadName) {
+      this.toastr.error('Please fill NAME required fields!');
+      return;
     }
-    this.dataLoading = false;
-  }, (err) => {
-    this.toastr.error('Error while saving Lead Detail');
-    this.dataLoading = false;
-  });
-}
+    if (!this.LeadDetail.LeadMobileNo) {
+      this.toastr.error('Please fill NAME required fields!');
+      return;
+    }
+    if (!this.LeadDetail.LeadComment) {
+      this.toastr.error('Please fill NAME required fields!');
+      return;
+    }
+    if (!this.LeadDetail.LeadStatus) {
+      this.toastr.error('Please fill NAME required fields!');
+      return;
+    }
+    if (!this.LeadDetail.Comment) {
+      this.toastr.error('Please fill NAME required fields!');
+      return;
+    }
+    console.log("Saving Lead Detail with details:", this.LeadDetail);
+    this.LeadDetail.FollowUpDate = this.loadData.loadDateYMD(this.LeadDetail.FollowUpDate);
+
+    let payload = {
+      request: this.localService.encrypt(JSON.stringify(this.LeadDetail)).toString()
+    };
+
+    this.dataLoading = true;
+    this.service.SaveLeadDetail(payload).subscribe((response: any) => {
+      if (response.Message === ConstantData.SuccessMessage) {
+        this.toastr.success(this.LeadDetail.LeadDetailId > 0 ? 'Lead Detail Updated' : 'Lead Detail Added');
+        $('#modal_popup').modal('hide');
+        this.getLeadDetailsList(this.LeadDetail.LeadId); // Refresh table
+        this.resetForm();
+      } else {
+        this.toastr.error(response.Message);
+      }
+      this.dataLoading = false;
+    }, (err) => {
+      this.toastr.error('Error while saving Lead Detail');
+      this.dataLoading = false;
+    });
+  }
 
 }

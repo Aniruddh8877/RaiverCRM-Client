@@ -31,6 +31,7 @@ export class LeadAssignComponent {
   userDetail: any = {};
   action: ActionModel = {} as ActionModel;
   staffLogin: StaffLoginModel = {} as StaffLoginModel;
+  
   LeadCategoryList: any = [];
   Filter: any = {};
   leadList: any[] = [];
@@ -39,8 +40,8 @@ export class LeadAssignComponent {
     LeadMobileNo: '',
     LeadComment: ''
   };
-
-
+  
+  
   constructor(
     private service: AppService,
     private toastr: ToastrService,
@@ -48,7 +49,7 @@ export class LeadAssignComponent {
     private loadData: LoadDataService,
     private router: Router
   ) { }
-
+  
   ngOnInit(): void {
     this.staffLogin = this.localService.getEmployeeDetail();
     this.LeadAssign.StaffId = this.staffLogin.StaffId;
@@ -56,8 +57,10 @@ export class LeadAssignComponent {
     this.validiateMenu();
     this.getStaffList();
     this.getLeadCategoryList();
+    this.getLeadAssignListByStaff();
     this.getLeadAssignList();
     this.resetForm();
+    console.log("StaffLogin:", this.staffLogin);
   }
 
   validiateMenu() {
@@ -131,6 +134,35 @@ export class LeadAssignComponent {
     }))
   }
 
+  getLeadDetailsList(leadId: any) {
+    //  console.log("Calling getLeadDetailsList with LeadId:", leadId);  
+    if (!leadId) {
+      this.toastr.error("Lead Id not found!");
+      return;
+    }
+
+    var obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify({ LeadId: leadId })).toString()
+    };
+
+    this.dataLoading = true;
+
+    this.service.getLeadDetailsList(obj).subscribe(
+      (r1: any) => {
+        let response = r1;
+        if (response.Message === ConstantData.SuccessMessage) {
+          this.leadList = response.LeadDeatilList;
+        } else {
+          this.toastr.error(response.Message);
+        }
+        this.dataLoading = false;
+      },
+      (err) => {
+        this.toastr.error("Error while fetching records");
+        this.dataLoading = false;
+      }
+    );
+  }
   SaveLeadAssign() {
 
     this.formLeadAssign.control.markAllAsTouched();
@@ -207,6 +239,7 @@ export class LeadAssignComponent {
   editLeadAssign(obj: any) {
     this.resetForm();
     this.LeadAssign = { ...obj };
+    this.getLeadDetailsList(obj.LeadId);
     if (this.LeadAssign.LeadDate) {
       this.LeadAssign.LeadDate = new Date(this.LeadAssign.LeadDate);
     }
@@ -235,25 +268,6 @@ export class LeadAssignComponent {
   }
 
   StaffList: any[] = [];
-
-  getStaffList() {
-    const obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({})).toString()
-    };
-    this.dataLoading = true;
-    this.service.getStaffList(obj).subscribe(r1 => {
-      let response = r1 as any;
-      if (response.Message === ConstantData.SuccessMessage) {
-        this.StaffList = response.StaffList;
-      } else {
-        this.toastr.error(response.Message);
-      }
-      this.dataLoading = false;
-    }, err => {
-      this.toastr.error("Error while fetching staff list");
-      this.dataLoading = false;
-    });
-  }
 
 
   imageUrl = ConstantData.getBaseUrl();
@@ -312,5 +326,57 @@ export class LeadAssignComponent {
   removeLeadItem(index: number) {
     this.leadList.splice(index, 1);
   }
+
+getLeadAssignListByStaff() {
+  const data = {
+    StaffId: this.LeadAssign.StaffId
+  };
+ 
+  this.dataLoading = true;
+  const request: RequestModel = {
+    request: this.localService.encrypt(JSON.stringify(data)).toString()
+  };
+  this.service.getLeadAssignListByStaff(request).subscribe(
+    (response: any) => {
+      if (response.Message === ConstantData.SuccessMessage) {
+        this.LeadAssignList = response.LeadAssignList;
+        this.toastr.success("Lead Assign list loaded successfully.");
+      } else {
+        this.toastr.error(response.Message);
+      }
+      this.dataLoading = false;
+    },
+    (error) => {
+      this.toastr.error("Error fetching Lead Assign list by Staff.");
+      this.dataLoading = false;
+    }
+  ); 
+}
+
+onStaffChange() {
+  if (this.LeadAssign.StaffId) {
+    this.getLeadAssignListByStaff();
+  }
+}
+
+ getStaffList() {
+    var obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify({ })).toString()
+    }
+    this.dataLoading = true
+    this.service.getStaffList(obj).subscribe(r1 => {
+      let response = r1 as any
+      if (response.Message == ConstantData.SuccessMessage) {
+        this.StaffList = response.StaffList;
+      } else {
+        this.toastr.error(response.Message)
+      }
+      this.dataLoading = false
+    }, (err => {
+      this.toastr.error("Error while fetching records")
+      this.dataLoading = false;
+    }))
+  }
+
 
 }

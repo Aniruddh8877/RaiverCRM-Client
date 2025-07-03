@@ -33,15 +33,39 @@ export class AppService {
   DeleteLeadAssign(obj: any) {
     return this.http.post(this.apiUrl + "LeadAssign/DeleteLeadAssign", obj, { headers: this.headers })
   }
+  getLeadAssignListByStaff(obj: any) {
+    return this.http.post(this.apiUrl + "LeadAssign/LeadAssignListByStaff", obj, { headers: this.headers })
+  }
 
   /////////////////////////////////////////////////////
-  
+
   getLeadDetailsList(obj: any) {
     return this.http.post(this.apiUrl + "LeadDetial/LeadDetailList", obj, { headers: this.headers })
   }
   SaveLeadDetail(obj: any) {
     return this.http.post(this.apiUrl + "LeadDetial/SaveLeadDetail", obj, { headers: this.headers })
   }
+
+  /////////////////////////////////////////////////////
+
+  SaveLeaveRequest(obj: any) {
+    return this.http.post(this.apiUrl + "LeaveRequest/SaveLeaveRequest", obj, { headers: this.headers })
+  }
+
+  getLeaveRequestList(obj: any) {
+    return this.http.post(this.apiUrl + "LeaveRequest/LeaveRequestList", obj, { headers: this.headers });
+  }
+
+  getLeaveDetailList(obj: any) {
+    return this.http.post(this.apiUrl + "LeaveDetail/LeaveDetailList", obj, { headers: this.headers });
+  }
+
+  UpdateLeaveDetail(obj: any) {
+    return this.http.post(this.apiUrl + "LeaveDetail/UpdateLeaveDetail", obj, { headers: this.headers });
+  }
+
+
+
 
 
 

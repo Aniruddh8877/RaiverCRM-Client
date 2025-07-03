@@ -18,6 +18,7 @@ export interface ActionModel {
     ParentMenuTitle: string
 }
 export interface StaffLoginModel {
+    RoleId: any;
     StaffLoginId: number,
     StaffId: number,
     StaffName: string,

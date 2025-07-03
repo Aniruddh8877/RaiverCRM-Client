@@ -90,11 +90,31 @@ export enum DocType {
     Print = 4,
 }
 
-export enum LeadStatus
-    {
-        Pending =1,
-        Closed = 2,
-        FollowUp = 3,
-        NotInterest =4,
-        NotResponsed=5
-    }
+export enum LeadStatus {
+    Pending = 1,
+    Closed = 2,
+    FollowUp = 3,
+    NotInterest = 4,
+    NotResponsed = 5
+}
+
+export enum Leavestatus {
+    Pending = 1,
+    Rejected = 2,
+    Approved = 3,
+    Cancled = 4,
+}
+
+export enum LeaveType
+{
+    CasualLeave = 1,
+    SickLeave = 2,
+    EarnedLeave = 3,
+    MaternityLeave = 4,
+    PaternityLeave = 5,
+    BereavementLeave = 6,
+    UnpaidLeave = 7,
+    CompOff = 8,
+    HalfDayLeave = 9,
+    SpecialLeave = 10
+}

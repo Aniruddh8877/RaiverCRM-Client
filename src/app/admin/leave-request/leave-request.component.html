@@ -1,0 +1,162 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+     <div class="row">
+          <div class="pagetitle dashboard col-sm-8">
+               <h1>{{action.MenuTitle}}</h1>
+               <nav>
+                    <ol class="breadcrumb">
+                         <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+                         <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+                         <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+                    </ol>
+               </nav>
+          </div>
+          <div class="col-sm-4">
+               <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
+                    (click)="newLeaveRequest()">Request a Leave</button>
+          </div>
+     </div>
+
+     <section class="section dashboard">
+          <div class="card">
+               <div class="card-body">
+                    <div class="table-container overflow-auto">
+                         <div class="dataTable-top">
+                              <div class="dataTable-dropdown d-flex">
+                                   <select class="dataTable-selector form-select form-select-sm"
+                                        [(ngModel)]="itemPerPage">
+                                        <option *ngFor="let option of PageSize" [value]="option">{{ option }}</option>
+                                   </select>
+                                   <span class="ms-2">Entries per page</span>
+                              </div>
+                              <div class="dataTable-search">
+                                   <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                                        placeholder="Search..." type="text">
+                              </div>
+                         </div>
+
+                         <table class="table table-sm table-bordered table-hover">
+                              <thead>
+                                   <tr>
+                                        <th>S.No</th>
+                                        <th (click)="sort('StaffName')" style="cursor:pointer;">Staff Name</th>
+                                        <th (click)="sort('StaffName')" style="cursor:pointer;">Leave Type</th>
+                                        <th (click)="sort('LeadDate')" style="cursor:pointer;">From Date</th>
+                                        <th (click)="sort('LeaveDateTo')" style="cursor:pointer;">To Date</th>
+                                        <th>No Of Days</th>
+                                        <th (click)="sort('LeaveType')" style="cursor:pointer;">Leave Type</th>
+                                        <th (click)="sort('LeaveType')" style="cursor:pointer;">Message</th>
+                                        <th (click)="sort('Status')" style="cursor:pointer;">Status</th>
+                                   </tr>
+                              </thead>
+                              <tbody>
+                                   <tr
+                                        *ngFor="let item of LeaveRequestList | filter:Search | orderBy:sortKey:reverse | paginate: { itemsPerPage: itemPerPage, currentPage: p }; let i = index;">
+                                        <td>{{ (itemPerPage * (p - 1)) + i + 1 }}</td>
+                                        <td>{{ item.StaffName }}</td>
+                                        <td>{{ item.LeaveType }}</td>
+                                        <td>{{ item.LeaveDateFrom | date:"dd-MM-yyyy" }}</td>
+                                        <td>{{ item.LeaveDateTo | date:"dd-MM-yyyy" }}</td>
+                                        <td>{{ item.NoOfDays }}</td>
+                                        <td>{{ AllLeaveType[item.LeaveType] }}</td>
+                                        <td>{{ item.Message }}</td>
+                                        <td>
+                                             <span class="badge"
+                                                  [ngClass]="item.LeaveStatus == 1 ? 'text-bg-warning' : (item.LeaveStatus == 2 ? 'text-bg-danger' : 'text-bg-info')">
+                                                  {{ AllLeavestatus[item.LeaveStatus] }}
+                                             </span>
+                                        </td>
+                                        
+                                   </tr>
+                              </tbody>
+                         </table>
+
+                         <div class="dataTable-bottom">
+                              <pagination-controls (pageChange)="p = $event" style="float:right;"
+                                   class="my-pagination"></pagination-controls>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </section>
+
+     <!-- Modal: Add/Edit Leave Request -->
+     <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static"
+          data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+               <div class="modal-content">
+                    <div class="modal-header">
+                         <h5 class="modal-title">{{ LeaveRequest.LeaveId > 0 ? 'Update Leave Request' : 'New Leave Request' }}</h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                         <form #formLeaveRequest="ngForm" class="row g-3">
+
+                              <!-- Leave Type -->
+                              <mat-form-field appearance="outline" class="col-sm-4">
+                                   <mat-label>Leave Type</mat-label>
+                                   <mat-select name="LeaveType" [(ngModel)]="LeaveRequest.LeaveType" required>
+                                        <mat-option *ngFor="let leave of LeaveTypeList" [value]="leave.Key">{{
+                                             leave.Value }}</mat-option>
+                                   </mat-select>
+                                   <mat-error *ngIf="isSubmitted && !LeaveRequest.LeaveType">Leave Type is
+                                        <strong>required</strong></mat-error>
+                              </mat-form-field>
+
+                              <!-- From Date -->
+                              <mat-form-field appearance="outline" class="col-sm-4">
+                                   <mat-label>From Date</mat-label>
+                                   <input matInput [matDatepicker]="fromPicker" name="LeaveDateFrom"
+                                        [(ngModel)]="LeaveRequest.LeaveDateFrom" required
+                                        (dateChange)="onDateChange()" />
+                                   <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                                   <mat-datepicker #fromPicker></mat-datepicker>
+                                   <mat-error *ngIf="isSubmitted && !LeaveRequest.LeaveDateFrom">From Date is
+                                        <strong>required</strong></mat-error>
+                              </mat-form-field>
+
+                              <!-- To Date -->
+                              <mat-form-field appearance="outline" class="col-sm-4">
+                                   <mat-label>To Date</mat-label>
+                                   <input matInput [matDatepicker]="toPicker" name="LeaveDateTo"
+                                        [(ngModel)]="LeaveRequest.LeaveDateTo" required (dateChange)="onDateChange()" />
+                                   <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                                   <mat-datepicker #toPicker></mat-datepicker>
+                                   <mat-error *ngIf="isSubmitted && !LeaveRequest.LeaveDateTo">To Date is
+                                        <strong>required</strong></mat-error>
+                              </mat-form-field>
+
+                              <!-- No of Days -->
+                              <mat-form-field appearance="outline" class="col-sm-2">
+                                   <mat-label>No of Days</mat-label>
+                                   <input matInput name="NoOfDays" [(ngModel)]="LeaveRequest.NoOfDays" readonly />
+                              </mat-form-field>
+
+
+                              <!-- Message -->
+                              <mat-form-field appearance="outline" class="col-sm-12">
+                                   <mat-label>Reason / Message</mat-label>
+                                   <textarea matInput name="Message" [(ngModel)]="LeaveRequest.Message" rows="3"
+                                        style="resize:none;" required></textarea>
+                                   <mat-error *ngIf="isSubmitted && !LeaveRequest.Message">Message is
+                                        <strong>required</strong></mat-error>
+                              </mat-form-field>
+
+                         </form>
+                    </div>
+
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                              (click)="resetForm()">Cancel</button>
+                         <button type="button" class="btn btn-primary" (click)="SaveLeaveRequest()">
+                              {{ LeaveRequest.LeaveId > 0 ? 'Update' : 'Submit' }}
+                         </button>
+                    </div>
+
+               </div>
+          </div>
+     </div>
+
+</main>
