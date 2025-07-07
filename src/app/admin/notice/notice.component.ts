@@ -11,14 +11,13 @@ import { Router } from '@angular/router';
 declare var $: any;
 
 @Component({
-  selector: 'app-department',
-  templateUrl: './department.component.html',
-  styleUrls: ['./department.component.css']
+  selector: 'app-notice',
+  templateUrl: './notice.component.html',
+  styleUrls: ['./notice.component.css']
 })
-export class DepartmentComponent {
+export class NoticeComponent {
+
   dataLoading: boolean = false
-  DepartmentList: any = []
-  Department: any = {}
   isSubmitted = false
   StatusList = this.loadData.GetEnumList(Status);
   PageSize = ConstantData.PageSizes;
@@ -30,7 +29,13 @@ export class DepartmentComponent {
   action: ActionModel = {} as ActionModel;
   staffLogin: StaffLoginModel = {} as StaffLoginModel;
   AllStatusList = Status;
-  constructor(
+  StaffList: any[] = []; 
+
+  NoticeList: any[] = []; // Assuming you have a NoticeList to display notices
+  Notice: any = {}; // Assuming you have a Notice object to hold notice details
+
+
+constructor(
     private service: AppService,
     private toastr: ToastrService,
     private loadData: LoadDataService,
@@ -38,14 +43,16 @@ export class DepartmentComponent {
     private router: Router
   ) { }
 
+
   ngOnInit(): void {
     this.staffLogin = this.localService.getEmployeeDetail();
     this.validiateMenu();
-    this.getDepartmentList();
+    this.GetNoticList();
+    this.getStaffList();
+    this.Notice.Noticedate=new Date()
     this.resetForm();
   }
-  
-  validiateMenu() {
+ validiateMenu() {
     var obj: RequestModel = {
       request: this.localService.encrypt(JSON.stringify({ Url: this.router.url,StaffLoginId:this.staffLogin.StaffLoginId })).toString()
     }
@@ -58,16 +65,15 @@ export class DepartmentComponent {
       this.dataLoading = false;
     }))
   }
-
-  @ViewChild('formDepartment') formDepartment: NgForm;
+  @ViewChild('formNotice') formNotice: NgForm;
   resetForm() {
-    this.Department = {}
-    if (this.formDepartment) {
-      this.formDepartment.control.markAsPristine();
-      this.formDepartment.control.markAsUntouched();
+    this.Notice = {};
+    if (this.formNotice) {
+      this.formNotice.control.markAsPristine();
+      this.formNotice.control.markAsUntouched();
     }
     this.isSubmitted = false
-    this.Department.Status = 1
+    this.Notice.NoticeStatus = 1
   }
 
   sort(key: any) {
@@ -79,15 +85,17 @@ export class DepartmentComponent {
     this.p = p
   }
 
-  getDepartmentList() {
+   GetNoticList() {
     var obj: RequestModel = {
       request: this.localService.encrypt(JSON.stringify({ })).toString()
     }
     this.dataLoading = true
-    this.service.getDepartmentList(obj).subscribe(r1 => {
+    this.service.GetNoticList(obj).subscribe(r1 => {
       let response = r1 as any
       if (response.Message == ConstantData.SuccessMessage) {
-        this.DepartmentList = response.DepartmentList;
+        this.NoticeList = response.NoticeList;
+        console.log("NoticeList", this.NoticeList);
+        
       } else {
         this.toastr.error(response.Message)
       }
@@ -97,46 +105,50 @@ export class DepartmentComponent {
     }))
   }
 
-  saveDepartment() {
-    this.isSubmitted = true;
-    this.formDepartment.control.markAllAsTouched();
-    if (this.formDepartment.invalid) {
-      this.toastr.error("Fill all the required fields !!")
-      return
-    }
-    var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify(this.Department)).toString()
-    }
-    this.service.saveDepartment(obj).subscribe(r1 => {
-      let response = r1 as any
-      if (response.Message == ConstantData.SuccessMessage) {
-        if (this.Department.DepartmentId > 0) {
-          this.toastr.success("Department detail updated successfully")
-          $('#staticBackdrop').modal('hide')
-        } else {
-          this.toastr.success("Department added successfully")
-        }
-        this.resetForm()
-        this.getDepartmentList()
-      } else {
-        this.toastr.error(response.Message)
-      }
-    }, (err => {
-      this.toastr.error("Error occured while submitting data")
-    }))
-  }
 
-  deleteDepartment(obj: any) {
+    SaveNotice() {
+      this.isSubmitted = true;
+      this.formNotice.control.markAllAsTouched();
+     this.Notice.NoticeDate = this.loadData.loadDateYMD(this.Notice.Noticedate);
+      this.Notice.CreatedBy = this.staffLogin.StaffLoginId;
+      this.Notice.UpdatedBy = this.staffLogin.StaffLoginId;
+      if (this.formNotice.invalid) {
+        this.toastr.error("Fill all the required fields !!")
+        return
+      }
+      var obj: RequestModel = {
+        request: this.localService.encrypt(JSON.stringify(this.Notice)).toString()
+      }
+      this.service.SaveNotice(obj).subscribe(r1 => {
+        let response = r1 as any
+        if (response.Message == ConstantData.SuccessMessage) {
+          if (this.Notice.NoticeId > 0) {
+            this.toastr.success("Notice detail updated successfully")
+            $('#staticBackdrop').modal('hide')
+          } else {
+            this.toastr.success("Notice added successfully")
+          }
+          this.resetForm()
+          this.GetNoticList()
+        } else {
+          this.toastr.error(response.Message)
+        }
+      }, (err => {
+        this.toastr.error("Error occured while submitting data")
+      }))
+    }
+  
+    DeleteNotice(obj: any) {
     if (confirm("Are your sure you want to delete this recored")) {
       var request: RequestModel = {
         request: this.localService.encrypt(JSON.stringify(obj)).toString()
       }
       this.dataLoading = true
-      this.service.deleteDepartment(request).subscribe(r1 => {
+      this.service.DeleteNotice(request).subscribe(r1 => {
         let response = r1 as any
         if (response.Message == ConstantData.SuccessMessage) {
           this.toastr.success("Record Deleted successfully")
-          this.getDepartmentList()
+          this.GetNoticList()
         } else {
           this.toastr.error(response.Message)
           this.dataLoading = false
@@ -148,12 +160,31 @@ export class DepartmentComponent {
     }
   }
 
-  editDepartment(obj: any) {
+    editNotice(obj: any) {
     this.resetForm()
-    this.Department = obj
+    this.Notice = obj
 
   }
 
+   getStaffList() {
+    var obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify({ })).toString()
+    }
+    this.dataLoading = true
+    this.service.getStaffList(obj).subscribe(r1 => {
+      let response = r1 as any
+      if (response.Message == ConstantData.SuccessMessage) {
+        this.StaffList = response.StaffList;
+      } else {
+        this.toastr.error(response.Message)
+      }
+      this.dataLoading = false
+    }, (err => {
+      this.toastr.error("Error while fetching records")
+      this.dataLoading = false;
+    }))
+  }
 
-  
+
+
 }

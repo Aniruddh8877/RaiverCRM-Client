@@ -105,8 +105,7 @@ export enum Leavestatus {
     Cancled = 4,
 }
 
-export enum LeaveType
-{
+export enum LeaveType {
     CasualLeave = 1,
     SickLeave = 2,
     EarnedLeave = 3,
@@ -117,4 +116,26 @@ export enum LeaveType
     CompOff = 8,
     HalfDayLeave = 9,
     SpecialLeave = 10
+}
+
+export enum ResignationStatus {
+    Pending = 1,
+    Confirm = 2,
+    NoticPeriod = 3,
+    Canceled = 4,
+}
+
+export enum Months {
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12
 }

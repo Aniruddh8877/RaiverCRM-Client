@@ -38,7 +38,7 @@ export class LeaveDetailComponent {
     private localService: LocalService,
     private loadData: LoadDataService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.staffLogin = this.localService.getEmployeeDetail();
@@ -104,7 +104,7 @@ export class LeaveDetailComponent {
       if (response.Message === ConstantData.SuccessMessage) {
         this.LeaveDetailList = response.LeaveDetailList;
         console.log('LeaveDetailList:', this.LeaveDetailList);
-        
+
       } else {
         this.toastr.error(response.Message);
       }
@@ -114,7 +114,9 @@ export class LeaveDetailComponent {
   saveLeaveDetail() {
     this.isSubmitted = true;
     if (!this.formLeaveDetail.valid) return;
-
+this.LeaveDetail.LeaveDateFrom = this.loadData.loadDateYMD(this.LeaveDetail.LeaveDateFrom);
+    this.LeaveDetail.LeaveDateTo = this.loadData.loadDateYMD(this.LeaveDetail.LeaveDateTo);
+    this.LeaveDetail.StatusUpdatedDate = this.loadData.loadDateYMD(this.LeaveDetail.StatusUpdatedDate);
     const data = {
       ...this.LeaveDetail,
       UpdatedBy: this.staffLogin.StaffLoginId
@@ -142,18 +144,18 @@ export class LeaveDetailComponent {
 
 
   editLeaveDetail(obj: any) {
-  this.resetForm();
-  this.LeaveDetail = { ...obj };
+    this.resetForm();
+    this.LeaveDetail = { ...obj };
 
-  // If dates are in string format, convert to Date object for Angular Material DatePicker
-  if (this.LeaveDetail.LeaveDateFrom) {
-    this.LeaveDetail.LeaveDateFrom = new Date(this.LeaveDetail.LeaveDateFrom);
-  }
-  if (this.LeaveDetail.LeaveDateTo) {
-    this.LeaveDetail.LeaveDateTo = new Date(this.LeaveDetail.LeaveDateTo);
-  }
+    // If dates are in string format, convert to Date object for Angular Material DatePicker
+    if (this.LeaveDetail.LeaveDateFrom) {
+      this.LeaveDetail.LeaveDateFrom = new Date(this.LeaveDetail.LeaveDateFrom);
+    }
+    if (this.LeaveDetail.LeaveDateTo) {
+      this.LeaveDetail.LeaveDateTo = new Date(this.LeaveDetail.LeaveDateTo);
+    }
 
-  $('#modal_popup').modal('show');
-}
+    $('#modal_popup').modal('show');
+  }
 
 }

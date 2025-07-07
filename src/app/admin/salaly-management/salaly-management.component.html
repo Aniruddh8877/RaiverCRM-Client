@@ -1,0 +1,160 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+
+     <div class="row">
+          <div class="pagetitle dashboard col-sm-8">
+               <h1>{{action.MenuTitle}}</h1>
+               <nav>
+                    <ol class="breadcrumb">
+                         <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+                         <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+                         <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+                    </ol>
+               </nav>
+          </div>
+          <div class="col-sm-4">
+               <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
+                    (click)="newSalaryManagement()">New Salary </button>
+          </div>
+     </div>
+     <section class="section dashboard">
+          <div class="card">
+               <div class="card-body ">
+                    <div class="table-container overflow-auto">
+                         <div class="dataTable-top">
+                              <div class="dataTable-dropdown d-flex">
+                                   <select class="dataTable-selector form-select form-select-sm"
+                                        [(ngModel)]="itemPerPage">
+                                        <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                                   </select>
+                                   <span class="ms-2">Entries per page</span>
+                              </div>
+                              <div class="dataTable-search">
+                                   <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                                        placeholder="Search..." type="text">
+                              </div>
+                         </div>
+                         <table class="table table-sm table-bordered table-hover">
+                              <thead>
+                                   <tr>
+                                        <th>S.No</th>
+                                        <th style="cursor:pointer;" (click)="sort('StaffName')">Staff Name</th>
+                                        <th style="cursor:pointer;" (click)="sort('StaffCode')">Staff Code</th>
+                                        <th>Month</th>
+                                        <th>Total Working Days</th>
+                                        <th>Absent Day</th>
+                                        <th>Working Day</th>
+                                        <th>BasicSalary</th>
+                                        <th>Amont</th>
+                                        <th> PaymentDate</th>
+                                        <!-- <th>PaymentMode</th> -->
+                                   </tr>
+                              </thead>
+                              <tbody>
+                                   <tr
+                                        *ngFor="let item of SalaryList | filter:Search | orderBy:sortKey:reverse | paginate: { itemsPerPage: itemPerPage, currentPage: p }; let i = index">
+                                        <td>{{ (itemPerPage * (p - 1)) + i + 1 }}</td>
+                                        <td>{{ item.StaffName }}</td>
+                                        <td>{{ item.StaffCode }}</td>
+                                        <td>{{ item.Months }}</td>
+                                        <td>{{ item.TotalWorkingDay }}</td>
+                                        <td>{{ item.AbsentDay }}</td>
+                                        <td>{{ item.WorkingDay }}</td>
+                                        <td>{{ item.BasicSalary }}</td>
+                                        <td>{{ item.Amount }}</td>
+                                        <td>{{ item.PaymentDate|date:"dd-MM-yy" }}</td>
+                                        <!-- <td>{{ item.PaymentMode }}</td> -->
+                              
+                                   </tr>
+                              </tbody>
+                         </table>
+                         <div class="dataTable-bottom">
+                              <pagination-controls (pageChange)="p=$event" style="float:right;"
+                                   class="my-pagination"></pagination-controls>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </section>
+     <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static"
+          data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+               <div class="modal-content">
+                    <div class="modal-header">
+                         <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Salary.SalaryId > 0 ? 'Update':'New'}}
+                              Lead Category
+                         </h1>
+                         <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                         <form #formSalary="ngForm" class="d-flex justify-content-evenly flex-wrap">
+                              <div class="container">
+                                   <div class="row">
+
+                                        <mat-form-field appearance="outline" class="col-sm-12">
+                                             <mat-label>Staff Name</mat-label>
+                                             <mat-select name="StaffId" [(ngModel)]="Salary.StaffId" #StaffId="ngModel"
+                                                  (selectionChange)="onStaffChange($event.value)" required>
+                                                  <mat-option *ngFor="let Staff of StaffList" [value]="Staff.StaffId">
+                                                       {{ Staff.StaffName }} 
+                                                  </mat-option>
+                                             </mat-select>
+                                             <mat-error *ngIf="isSubmitted">Staff name is
+                                                  <strong>required</strong></mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                             <mat-label>Month</mat-label>
+                                             <mat-select name="Months" [(ngModel)]="Salary.Months" required>
+                                                  <mat-option *ngFor="let Month of MonthList" [value]="Month.Key">
+                                                       {{ Month.Value }}
+                                                  </mat-option>
+                                             </mat-select>
+                                             <mat-error>Month is <strong>required</strong></mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                             <mat-label>Total Working Day</mat-label>
+                                             <input matInput name="TotalWorkingDay" [(ngModel)]="Salary.TotalWorkingDay"
+                                                  type="number" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4 ">
+                                             <mat-label>Total Absent</mat-label>
+                                             <input matInput name="AbsentDay" [(ngModel)]="Salary.AbsentDay"
+                                                  type="number" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                             <mat-label>Working Day</mat-label>
+                                             <input matInput name="WorkingDay" [(ngModel)]="Salary.WorkingDay"
+                                                  type="number" (ngModelChange)="calculateAmount()" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                             <mat-label>Basic Salary</mat-label>
+                                             <input matInput name="BasicSalary" [(ngModel)]="Salary.BasicSalary"
+                                                  type="number" (ngModelChange)="calculateAmount()" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                             <mat-label>Amount</mat-label>
+                                             <input matInput name="Amount" [(ngModel)]="Salary.Amount" type="number"
+                                                  readonly>
+                                        </mat-form-field>
+
+                                   </div>
+
+                              </div>
+                         </form>
+                    </div>
+                    <div class="modal-footer mt-2">
+                         <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                              (click)="resetForm()">Cancel</button>
+                         <button class="btn btn-primary" (click)="SaveSalaryManagement()">{{Salary.SalaryId >
+                              0 ? 'Update':'Add'}}</button>
+                    </div>
+               </div>
+          </div>
+     </div>
+</main>

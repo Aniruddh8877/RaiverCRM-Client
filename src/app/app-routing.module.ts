@@ -23,6 +23,9 @@ import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
 import { LeaveRequestComponent } from './admin/leave-request/leave-request.component';
 import { LeaveDetailComponent } from './admin/leave-detail/leave-detail.component';
 import { ResignationRequestComponent } from './admin/resignation-request/resignation-request.component';
+import { ResignationDetailComponent } from './admin/resignation-detail/resignation-detail.component';
+import { SalalyManagementComponent } from './admin/salaly-management/salaly-management.component';
+import { NoticeComponent } from './admin/notice/notice.component';
 
 const routes: Routes = [
   { path: '', redirectTo: "/admin-login", pathMatch: 'full' },
@@ -51,9 +54,8 @@ const routes: Routes = [
       {path:'LeaveRequest',component:LeaveRequestComponent},
       {path:'LeaveDetail',component:LeaveDetailComponent},
       {path:'ResignationRequest',component:ResignationRequestComponent},
-      // {path:'',component:},
-      // {path:'',component:},
-      // {path:'',component:},
+      {path:'ResignationDetail',component:ResignationDetailComponent},
+      {path:'Notice',component:NoticeComponent},
     ]
   },
   { path: 'page-not-found', component: PageNotFoundComponent },

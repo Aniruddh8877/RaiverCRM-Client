@@ -56,6 +56,8 @@ export class AppService {
     return this.http.post(this.apiUrl + "LeaveRequest/LeaveRequestList", obj, { headers: this.headers });
   }
 
+
+  /////////////////////////////////////////////////////
   getLeaveDetailList(obj: any) {
     return this.http.post(this.apiUrl + "LeaveDetail/LeaveDetailList", obj, { headers: this.headers });
   }
@@ -64,11 +66,47 @@ export class AppService {
     return this.http.post(this.apiUrl + "LeaveDetail/UpdateLeaveDetail", obj, { headers: this.headers });
   }
 
+  /////////////////////////////////////////////////////
+  
+  getResignationList(obj: any) {
+    return this.http.post(this.apiUrl + "ResignationRequest/ResignationList", obj, { headers: this.headers });
+  }
 
+  SaveResignation(obj: any) {
+    return this.http.post(this.apiUrl + "ResignationRequest/SaveResignation", obj, { headers: this.headers });
+  }
+  
+  /////////////////////////////////////////////////////
 
+  GetResignationDetailList(obj: any) {
+    return this.http.post(this.apiUrl + "ResignationDetail/ResignationDetailList", obj, { headers: this.headers });
+  } 
 
+  SaveResignationDetail(obj: any) {
+    return this.http.post(this.apiUrl + "ResignationDetail/SaveResignationDetail", obj, { headers: this.headers });
+  }
 
+  /////////////////////////////////////////////////
 
+  GetSalaryManagementList(obj: any) {
+    return this.http.post(this.apiUrl + "SalaryManagement/SalaryManagementList", obj, { headers: this.headers });
+  }
+  SaveSalaryManagement(obj: any) {
+    return this.http.post(this.apiUrl + "SalaryManagement/SaveSalaryManagement", obj, { headers: this.headers });
+  }
+  /////////////////////////////////////////////////
+  
+  GetNoticList(obj: any) {
+    return this.http.post(this.apiUrl + "Notice/NoticeList", obj, { headers: this.headers });
+  }
+  SaveNotice(obj: any) {
+    return this.http.post(this.apiUrl + "Notice/SaveNotice", obj, { headers: this.headers });
+  }
+  DeleteNotice(obj: any) {
+    return this.http.post(this.apiUrl + "Notice/DeleteNotice", obj, { headers: this.headers });
+  }
+  
+  /////////////////////////////////////////////////
   getImageUrl(): string {
     return ConstantData.getBaseUrl();
   }

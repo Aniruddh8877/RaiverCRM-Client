@@ -43,6 +43,9 @@ import { LeadDetailComponent } from './admin/lead-detail/lead-detail.component';
 import { LeaveRequestComponent } from './admin/leave-request/leave-request.component';
 import { LeaveDetailComponent } from './admin/leave-detail/leave-detail.component';
 import { ResignationRequestComponent } from './admin/resignation-request/resignation-request.component';
+import { ResignationDetailComponent } from './admin/resignation-detail/resignation-detail.component';
+import { SalalyManagementComponent } from './admin/salaly-management/salaly-management.component';
+import { NoticeComponent } from './admin/notice/notice.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +77,10 @@ import { ResignationRequestComponent } from './admin/resignation-request/resigna
     LeadDetailComponent,
     LeaveRequestComponent,
     LeaveDetailComponent,
-    ResignationRequestComponent
+    ResignationRequestComponent,
+    ResignationDetailComponent,
+    SalalyManagementComponent,
+    NoticeComponent
   ],
   imports: [
     BrowserModule,

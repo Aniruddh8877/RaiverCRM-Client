@@ -4,13 +4,13 @@
         <div class="pagetitle dashboard col-sm-8">
             <h1>{{action.MenuTitle}}</h1>
             <nav>
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
-                <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
-                <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
-              </ol>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+                    <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+                    <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+                </ol>
             </nav>
-          </div>
+        </div>
         <div class="col-sm-4">
             <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
                 data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="resetForm()">New
@@ -193,6 +193,16 @@
                                 </mat-form-field>
 
                                 <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                    <mat-label>Basic Salary</mat-label>
+                                    <input matInput type="number" name="BasicSalary" #BasicSalary="ngModel"
+                                        [(ngModel)]="Staff.BasicSalary" required>
+                                    <mat-error *ngIf="BasicSalary.invalid && BasicSalary.touched">
+                                        Basic Salary is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+
+                                <mat-form-field appearance="outline" class="col-sm-3 form-group">
                                     <mat-label>Father Name</mat-label>
                                     <input matInput #FatherName="ngModel" name="FatherName"
                                         [(ngModel)]="Staff.FatherName">
@@ -207,7 +217,7 @@
                                         [matDatepicker]="DOBPicker">
                                     <mat-datepicker-toggle matIconSuffix [for]="DOBPicker"></mat-datepicker-toggle>
                                     <mat-datepicker #DOBPicker></mat-datepicker>
-                                    
+
                                 </mat-form-field>
 
                                 <!--mobile-->

@@ -1,1 +1,176 @@
-<p>resignation-request works!</p>
+<app-progress *ngIf="dataLoading"></app-progress>
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+
+  <div class="row">
+    <div class="pagetitle dashboard col-sm-8">
+      <h1>{{action.MenuTitle}}</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+          <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+          <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="col-sm-4">
+      <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
+        (click)="newResignation()">New
+        Lead Category </button>
+    </div>
+  </div>
+
+
+  <section class="section dashboard">
+    <div class="card">
+      <div class="card-body ">
+        <div class="table-container overflow-auto">
+          <div class="dataTable-top">
+            <div class="dataTable-dropdown d-flex">
+              <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+              </select>
+              <span class="ms-2">Entries per page</span>
+            </div>
+            <div class="dataTable-search">
+              <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search" placeholder="Search..."
+                type="text">
+            </div>
+          </div>
+        <table class="table table-sm table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>S.No</th>
+      <th style="cursor:pointer;" (click)="sort('StaffName')">Staff Name</th>
+      <th style="cursor:pointer;" (click)="sort('StaffCode')">Staff Code</th>
+      <th>Join Date</th>
+      <th>Departure Date</th>
+      <th>Statement</th>
+      <th>Brief Reason</th>
+      <!-- <th>Instruction</th> -->
+      <th>Status</th>
+      <!-- <th *ngIf="action.CanEdit&& staffLogin.RoleId ==5">Edit</th> -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let item of ResignationList | filter:Search | orderBy:sortKey:reverse | paginate: { itemsPerPage: itemPerPage, currentPage: p }; let i = index">
+      <td>{{ (itemPerPage * (p - 1)) + i + 1 }}</td>
+      <td>{{ item.StaffName }}</td>
+      <td>{{ item.StaffCode }}</td>
+      <td>{{ item.JoinDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ item.DepatureDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ item.Statement }}</td>
+      <td>{{ item.BreafReason }}</td>
+      <!-- <td>{{ item.Instruction }}</td> -->
+      <td>
+        <span class="p-1"
+          [ngClass]="{
+            'badge text-bg-warning': item.Resignationstatus == 1,
+            'badge text-bg-success': item.Resignationstatus == 2,
+            'badge text-bg-primary': item.Resignationstatus == 3,
+            'badge text-bg-danger': item.Resignationstatus == 4
+          }">
+          {{ AllStatusList[item.Resignationstatus] }}
+        </span>
+      </td>
+      
+    </tr>
+  </tbody>
+</table>
+
+          <div class="dataTable-bottom">
+            <pagination-controls (pageChange)="p=$event" style="float:right;"
+              class="my-pagination"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <div class="modal fade" *ngIf="action.CanEdit || action.CanCreate" id="modal_popup" data-bs-backdrop="static"
+    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Resignation.ResignationId > 0 ? 'Update':'New'}}
+            Lead Category
+          </h1>
+          <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #formResignation="ngForm" class="d-flex justify-content-evenly flex-wrap">
+            <div class="container">
+              <div class="row">
+
+                <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Joining Date</mat-label>
+                  <input matInput [matDatepicker]="joinDatePicker" name="JoinDate" [(ngModel)]="Resignation.JoinDate"
+                    required>
+                  <mat-datepicker-toggle matSuffix [for]="joinDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #joinDatePicker></mat-datepicker>
+                  <mat-error>
+                    Join date is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Departure Date</mat-label>
+                  <input matInput [matDatepicker]="departureDatePicker" name="DepatureDate"
+                    [(ngModel)]="Resignation.DepatureDate" required>
+                  <mat-datepicker-toggle matSuffix [for]="departureDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #departureDatePicker></mat-datepicker>
+                  <mat-error>
+                    Departure date is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Statement</mat-label>
+                  <input matInput name="Statement" [(ngModel)]="Resignation.Statement" required>
+                  <mat-error>
+                    Statement is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Brief Reason</mat-label>
+                  <input matInput name="BreafReason" [(ngModel)]="Resignation.BreafReason" required>
+                  <mat-error>
+                    Reason is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <!-- <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Instruction</mat-label>
+                  <input matInput name="Instruction" [(ngModel)]="Resignation.Instruction">
+                </mat-form-field> -->
+
+                <!-- <mat-form-field appearance="outline" class="col-sm-6">
+                  <mat-label>Status</mat-label>
+                  <mat-select name="Resignationstatus" [(ngModel)]="Resignation.Resignationstatus" required>
+                    <mat-option [value]="status.Key" *ngFor="let status of StatusList">{{ status.Value }}</mat-option>
+                  </mat-select>
+                  <mat-error>
+                    Status is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field> -->
+
+              </div>
+
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer mt-2">
+          <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+            (click)="resetForm()">Cancel</button>
+          <button class="btn btn-primary" (click)="SaveResignation()">{{Resignation.ResignationId >
+            0 ? 'Update':'Add'}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

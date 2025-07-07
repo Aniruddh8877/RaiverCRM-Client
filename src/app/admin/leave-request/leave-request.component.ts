@@ -96,7 +96,8 @@ export class LeaveRequestComponent {
   SaveLeaveRequest() {
     this.formLeaveRequest.control.markAllAsTouched();
     this.isSubmitted = true;
-
+this.LeaveRequest.LeaveDateFrom = this.loadData.loadDateYMD(this.LeaveRequest.LeaveDateFrom);
+    this.LeaveRequest.LeaveDateTo = this.loadData.loadDateYMD(this.LeaveRequest.LeaveDateTo);
     if (this.formLeaveRequest.invalid) {
       this.toastr.error("Please fill all required fields!");
       return;
