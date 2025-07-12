@@ -56,6 +56,8 @@ const routes: Routes = [
       {path:'ResignationRequest',component:ResignationRequestComponent},
       {path:'ResignationDetail',component:ResignationDetailComponent},
       {path:'Notice',component:NoticeComponent},
+      {path:'SalalyManagement',component:SalalyManagementComponent},
+      
     ]
   },
   { path: 'page-not-found', component: PageNotFoundComponent },
