@@ -67,7 +67,7 @@ export class AppService {
   }
 
   /////////////////////////////////////////////////////
-  
+
   getResignationList(obj: any) {
     return this.http.post(this.apiUrl + "ResignationRequest/ResignationList", obj, { headers: this.headers });
   }
@@ -75,12 +75,12 @@ export class AppService {
   SaveResignation(obj: any) {
     return this.http.post(this.apiUrl + "ResignationRequest/SaveResignation", obj, { headers: this.headers });
   }
-  
+
   /////////////////////////////////////////////////////
 
   GetResignationDetailList(obj: any) {
     return this.http.post(this.apiUrl + "ResignationDetail/ResignationDetailList", obj, { headers: this.headers });
-  } 
+  }
 
   SaveResignationDetail(obj: any) {
     return this.http.post(this.apiUrl + "ResignationDetail/SaveResignationDetail", obj, { headers: this.headers });
@@ -95,7 +95,7 @@ export class AppService {
     return this.http.post(this.apiUrl + "SalaryManagement/SaveSalaryManagement", obj, { headers: this.headers });
   }
   /////////////////////////////////////////////////
-  
+
   GetNoticList(obj: any) {
     return this.http.post(this.apiUrl + "Notice/NoticeList", obj, { headers: this.headers });
   }
@@ -105,7 +105,7 @@ export class AppService {
   DeleteNotice(obj: any) {
     return this.http.post(this.apiUrl + "Notice/DeleteNotice", obj, { headers: this.headers });
   }
-  
+
   /////////////////////////////////////////////////
   getImageUrl(): string {
     return ConstantData.getBaseUrl();

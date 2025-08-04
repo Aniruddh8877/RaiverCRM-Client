@@ -85,6 +85,8 @@ export class CompanyComponent {
       request: this.localService.encrypt(JSON.stringify({})).toString()
     }
     this.dataLoading = true
+    console.log("enter in  Company Details");
+    
     this.service.getCompanyList(obj).subscribe(r1 => {
       let response = r1 as any
       if (response.Message == ConstantData.SuccessMessage) {
@@ -92,6 +94,8 @@ export class CompanyComponent {
           this.Company = response.CompanyList[0];
           this.LogoPNGPhoto = this.imageUrl + this.Company.LogoPNG;
           this.LogoPhoto = this.imageUrl + this.Company.Logo;
+          console.log(this.Company);
+          
         }
       } else {
         this.toastr.error(response.Message)
@@ -100,6 +104,8 @@ export class CompanyComponent {
     }, (err => {
       this.toastr.error("Error while fetching records")
     }))
+    console.log("ending in company Details");
+    
   }
 
   setLogoPNGFile(event: any) {

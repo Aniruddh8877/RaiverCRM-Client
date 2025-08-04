@@ -35,10 +35,14 @@ export class AdminLoginComponent {
       request: this.localService.encrypt(JSON.stringify({ Status: Status.Active })).toString()
     }
     this.dataLoading = true
+    console.log("this is Company from admin login ");
+    
     this.service.getCompanyList(request).subscribe(r1 => {
       let response = r1 as any
       if (response.Message == ConstantData.SuccessMessage) {
         this.Company = response.CompanyList[0];
+        console.log(this.Company);
+        
       } else {
         this.toastr.error(response.Message)
       }

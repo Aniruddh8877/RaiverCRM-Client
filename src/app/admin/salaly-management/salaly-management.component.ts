@@ -5,7 +5,7 @@ import { ConstantData } from '../../utils/constant-data';
 import { NgForm } from '@angular/forms';
 import { LocalService } from '../../utils/local.service';
 import { LoadDataService } from '../../utils/load-data.service';
-import { Months, ResignationStatus, Status } from '../../utils/enum';
+import { Months, PaymentMode, ResignationStatus, Status } from '../../utils/enum';
 import { ActionModel, RequestModel, StaffLoginModel } from '../../utils/interface';
 import { Router } from '@angular/router';
 declare var $: any;
@@ -21,7 +21,9 @@ export class SalalyManagementComponent {
   // Salary: any = {}
   isSubmitted = false
   MonthList = this.loadData.GetEnumList(Months);
+  PaymentModeList= this.loadData.GetEnumList(PaymentMode);
   AllStatusList = Months;
+  AllPaymentMode=PaymentMode;
   PageSize = ConstantData.PageSizes;
   p: number = 1;
   Search: string = '';
@@ -113,6 +115,7 @@ export class SalalyManagementComponent {
 
 
   SaveSalaryManagement() {
+    
 
     this.formSalary.control.markAllAsTouched();
     this.isSubmitted = true
@@ -124,7 +127,7 @@ export class SalalyManagementComponent {
     // this.Salary.staffId = this.staffLogin.StaffId;
     // console.log(this.Salary);
     // this.Salary.CreatedBy = this.staffLogin.StaffLoginId;
-    this.Salary.Paymentdate = this.loadData.loadDateYMD(this.Salary.Paymentdate);
+    // this.Salary.Paymentdate = this.loadData.loadDateYMD(this.Salary.Paymentdate);
     
 
     var obj: RequestModel = {

@@ -40,23 +40,30 @@
                               <thead>
                                    <tr>
                                         <th>S.No</th>
-                                        <th>Staff Name</th>
-                                        <th>Staff Code</th>
-                                        <th style="cursor:pointer;" (click)="sort('NoticeName')">Notice Detail</th>
                                         <th style="cursor:pointer;" (click)="sort('NoticeName')">Notice Date</th>
+                                        <th style="cursor:pointer;" (click)="sort('NoticeName')">Notice Title</th>
+                                        <th style="cursor:pointer;" (click)="sort('NoticeName')">Notice Detail</th>
+                                        <!-- <th>Staff Code</th> -->
+                                        <th>Staff Name</th>
+                                        <th>File</th>
                                         <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
                                         <th *ngIf="action.CanEdit">Edit</th>
-                                        <th *ngIf="action.CanDelete">Delete</th>
+                                        <!-- <th *ngIf="action.CanDelete">Delete</th> -->
                                    </tr>
                               </thead>
                               <tbody>
                                    <tr
                                         *ngFor="let item of NoticeList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
                                         <td>{{(itemPerPage * (p -1)) +i+ 1}}</td>
-                                        <td>{{item.StaffName}}</td>
-                                        <td>{{item.StaffCode}}</td>
+                                        <td>{{item.NoticeDate|date:"dd-MM-yy"}}</td>
+                                        <td>{{item.NoticeTitle}}</td>
                                         <td>{{item.NoticeDetail}}</td>
-                                        <td>{{item.Noticedate|date:"dd-MM-yy"}}</td>
+                                        <td>{{item.StaffName}}</td>
+                                        <!-- <td>{{item.StaffCode}}</td> -->
+                                        <!-- <td>{{ item.LeadDetail }}</td> -->
+                                        <td><a [href]="imageUrl + item.Attachments" target="_blank"
+                                                  style="color:darkgoldenrod">View
+                                                  Attachment</a></td>
                                         <td>
                                              <span class="p-1"
                                                   [ngClass]="item.NoticeStatus == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
@@ -69,11 +76,11 @@
                                                   <i class="bi bi-pencil-square"></i>
                                              </button>
                                         </td>
-                                        <td *ngIf="action.CanDelete">
+                                        <!-- <td *ngIf="action.CanDelete">
                                              <button class="btn btn-sm btn-danger" (click)="DeleteNotice(item)">
                                                   <i class="bi bi-trash-fill"></i>
                                              </button>
-                                        </td>
+                                        </td> -->
                                    </tr>
                               </tbody>
                          </table>
@@ -108,8 +115,8 @@
                                         <!-- Staff Name -->
                                         <mat-form-field appearance="outline" class="col-sm-12">
                                              <mat-label>Staff Name</mat-label>
-                                             <mat-select name="StaffId" [(ngModel)]="Notice.StaffId" #StaffId="ngModel"
-                                                  required>
+                                             <mat-select name="StaffId" [(ngModel)]="Notice.StaffId" #StaffId="ngModel">
+                                                  <mat-option>All Staff</mat-option>
                                                   <mat-option *ngFor="let Staff of StaffList" [value]="Staff.StaffId">
                                                        {{ Staff.StaffName }}
                                                   </mat-option>
@@ -118,11 +125,21 @@
                                                   <strong>required</strong></mat-error>
                                         </mat-form-field>
 
-                                        <!-- NoticeDetail -->
-                                        <mat-form-field appearance="outline" class="col-sm-6">
-                                             <mat-label>Notice Name</mat-label>
-                                             <input matInput #NoticeDetail="ngModel" name="NoticeDetail"
-                                                  [(ngModel)]="Notice.NoticeDetail" required autofocus>
+                                        <!-- Notice Title -->
+                                        <mat-form-field appearance="outline" class="col-sm-12">
+                                             <mat-label>Notice Title</mat-label>
+                                             <input matInput #NoticeTitle="ngModel" name="NoticeTitle"
+                                                  [(ngModel)]="Notice.NoticeTitle" required autofocus>
+                                             <mat-error>
+                                                  Notice name is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+                                        <!-- NoticeDEtails-->
+                                        <mat-form-field appearance="outline" class="col-sm-12">
+                                             <mat-label>Notice Description</mat-label>
+                                             <textarea matInput #NoticeDetail="ngModel" name="NoticeDetail" rows="6"
+                                                  [(ngModel)]="Notice.NoticeDetail" required autofocus></textarea>
                                              <mat-error>
                                                   Notice name is <strong>required</strong>
                                              </mat-error>
@@ -131,12 +148,24 @@
 
                                         <mat-form-field appearance="outline" class="col-sm-6 form-group">
                                              <mat-label>Notice Date</mat-label>
-                                             <input matInput #Noticedate="ngModel" name="Noticedate" [(ngModel)]="Notice.Noticedate"
-                                                  [matDatepicker]="NoticedatePicker">
+                                             <input matInput #NoticeDate="ngModel" name="NoticeDate"
+                                                  [(ngModel)]="Notice.NoticeDate" [matDatepicker]="NoticeDatePicker"
+                                                  required>
                                              <mat-datepicker-toggle matIconSuffix
-                                                  [for]="NoticedatePicker"></mat-datepicker-toggle>
-                                             <mat-datepicker #NoticedatePicker></mat-datepicker>
+                                                  [for]="NoticeDatePicker"></mat-datepicker-toggle>
+                                             <mat-datepicker #NoticeDatePicker></mat-datepicker>
 
+                                        </mat-form-field>
+
+                                        <input accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" hidden #inputAttachments
+                                             [(ngModel)]="Notice.Attachments" name="inputAttachments"
+                                             (change)="setAttachments($event)" type="file" id="file">
+                                        <mat-form-field appearance="outline" class="col-sm-6 file_input"
+                                             (click)="inputAttachments.click()">
+                                             <mat-label>Attachement</mat-label>
+                                             <input matInput readonly="true" name="AttachmentsName"
+                                                  [(ngModel)]="Notice.AttachmentsName">
+                                             <button mat-icon-button matSuffix><mat-icon>attach_file</mat-icon></button>
                                         </mat-form-field>
 
                                         <!-- status -->

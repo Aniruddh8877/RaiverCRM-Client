@@ -46,6 +46,7 @@
                                         <th>Working Day</th>
                                         <th>BasicSalary</th>
                                         <th>Amont</th>
+                                        <th>Payment Mode</th>
                                         <th> PaymentDate</th>
                                         <!-- <th>PaymentMode</th> -->
                                    </tr>
@@ -62,6 +63,7 @@
                                         <td>{{ item.WorkingDay }}</td>
                                         <td>{{ item.BasicSalary }}</td>
                                         <td>{{ item.Amount }}</td>
+                                        <td>{{ AllPaymentMode[item.PaymentMode] }}</td>
                                         <td>{{ item.PaymentDate|date:"dd-MM-yy" }}</td>
                                         <!-- <td>{{ item.PaymentMode }}</td> -->
                               
@@ -103,7 +105,7 @@
                                                   <strong>required</strong></mat-error>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                        <mat-form-field appearance="outline" class="col-sm-6">
                                              <mat-label>Month</mat-label>
                                              <mat-select name="Months" [(ngModel)]="Salary.Months" required>
                                                   <mat-option *ngFor="let Month of MonthList" [value]="Month.Key">
@@ -113,31 +115,43 @@
                                              <mat-error>Month is <strong>required</strong></mat-error>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                        <mat-form-field appearance="outline" class="col-sm-6">
                                              <mat-label>Total Working Day</mat-label>
                                              <input matInput name="TotalWorkingDay" [(ngModel)]="Salary.TotalWorkingDay"
                                                   type="number" required>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4 ">
+                                        <mat-form-field appearance="outline" class="col-sm-6 ">
                                              <mat-label>Total Absent</mat-label>
                                              <input matInput name="AbsentDay" [(ngModel)]="Salary.AbsentDay"
                                                   type="number" required>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                        <mat-form-field appearance="outline" class="col-sm-6">
                                              <mat-label>Working Day</mat-label>
                                              <input matInput name="WorkingDay" [(ngModel)]="Salary.WorkingDay"
                                                   type="number" (ngModelChange)="calculateAmount()" required>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                        <mat-form-field appearance="outline" class="col-sm-6">
                                              <mat-label>Basic Salary</mat-label>
                                              <input matInput name="BasicSalary" [(ngModel)]="Salary.BasicSalary"
                                                   type="number" (ngModelChange)="calculateAmount()" readonly>
                                         </mat-form-field>
 
-                                        <mat-form-field appearance="outline" class="col-sm-4">
+                                          <mat-form-field appearance="outline" class="col-sm-6">
+                                             <mat-label>PaymentMode</mat-label>
+                                             <mat-select #PaymentMode="ngModel" name="PaymentMode"
+                                                  [(ngModel)]="Salary.PaymentMode" required>
+                                                  <mat-option [value]="status.Key"
+                                                       *ngFor="let status of PaymentModeList">{{status.Value}}</mat-option>
+                                             </mat-select>
+                                             <mat-error>
+                                                  Status is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="col-sm-6">
                                              <mat-label>Amount</mat-label>
                                              <input matInput name="Amount" [(ngModel)]="Salary.Amount" type="number"
                                                   readonly>

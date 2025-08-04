@@ -29,17 +29,17 @@ export class NoticeComponent {
   action: ActionModel = {} as ActionModel;
   staffLogin: StaffLoginModel = {} as StaffLoginModel;
   AllStatusList = Status;
-  StaffList: any[] = []; 
+  StaffList: any[] = [];
 
   NoticeList: any[] = []; // Assuming you have a NoticeList to display notices
   Notice: any = {}; // Assuming you have a Notice object to hold notice details
 
 
-constructor(
+  constructor(
     private service: AppService,
     private toastr: ToastrService,
     private loadData: LoadDataService,
-    private localService:LocalService,
+    private localService: LocalService,
     private router: Router
   ) { }
 
@@ -49,12 +49,12 @@ constructor(
     this.validiateMenu();
     this.GetNoticList();
     this.getStaffList();
-    this.Notice.Noticedate=new Date()
+    this.Notice.Noticedate = new Date()
     this.resetForm();
   }
- validiateMenu() {
+  validiateMenu() {
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ Url: this.router.url,StaffLoginId:this.staffLogin.StaffLoginId })).toString()
+      request: this.localService.encrypt(JSON.stringify({ Url: this.router.url, StaffLoginId: this.staffLogin.StaffLoginId })).toString()
     }
     this.dataLoading = true
     this.service.validiateMenu(obj).subscribe((response: any) => {
@@ -85,60 +85,70 @@ constructor(
     this.p = p
   }
 
-   GetNoticList() {
-    var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ })).toString()
-    }
-    this.dataLoading = true
-    this.service.GetNoticList(obj).subscribe(r1 => {
-      let response = r1 as any
-      if (response.Message == ConstantData.SuccessMessage) {
-        this.NoticeList = response.NoticeList;
-        console.log("NoticeList", this.NoticeList);
-        
-      } else {
-        this.toastr.error(response.Message)
+  GetNoticList() {
+    const data = {
+      StaffId: this.staffLogin.StaffId, // ✅ Sending StaffId to API
+    };
+
+    const obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify(data)).toString()
+    };
+
+    this.dataLoading = true;
+
+    this.service.GetNoticList(obj).subscribe({
+      next: (r1: any) => {
+        if (r1.Message === ConstantData.SuccessMessage) {
+          this.NoticeList = r1.NoticeList;
+          console.log("✅ NoticeList fetched: of notice compnenet", this.NoticeList);
+        } else {
+          this.toastr.error(r1.Message || 'Unknown error occurred');
+        }
+        this.dataLoading = false;
+      },
+      error: (err) => {
+        console.error('❌ API Error:', err);
+        this.toastr.error("Error while fetching records");
+        this.dataLoading = false;
       }
-      this.dataLoading = false
-    }, (err => {
-      this.toastr.error("Error while fetching records")
-    }))
+    });
   }
 
 
-    SaveNotice() {
-      this.isSubmitted = true;
-      this.formNotice.control.markAllAsTouched();
-     this.Notice.NoticeDate = this.loadData.loadDateYMD(this.Notice.Noticedate);
-      this.Notice.CreatedBy = this.staffLogin.StaffLoginId;
-      this.Notice.UpdatedBy = this.staffLogin.StaffLoginId;
-      if (this.formNotice.invalid) {
-        this.toastr.error("Fill all the required fields !!")
-        return
-      }
-      var obj: RequestModel = {
-        request: this.localService.encrypt(JSON.stringify(this.Notice)).toString()
-      }
-      this.service.SaveNotice(obj).subscribe(r1 => {
-        let response = r1 as any
-        if (response.Message == ConstantData.SuccessMessage) {
-          if (this.Notice.NoticeId > 0) {
-            this.toastr.success("Notice detail updated successfully")
-            $('#staticBackdrop').modal('hide')
-          } else {
-            this.toastr.success("Notice added successfully")
-          }
-          this.resetForm()
-          this.GetNoticList()
-        } else {
-          this.toastr.error(response.Message)
-        }
-      }, (err => {
-        this.toastr.error("Error occured while submitting data")
-      }))
+
+  SaveNotice() {
+    this.isSubmitted = true;
+    this.formNotice.control.markAllAsTouched();
+    this.Notice.NoticeDate = this.loadData.loadDateYMD(this.Notice.NoticeDate);
+    this.Notice.CreatedBy = this.staffLogin.StaffLoginId;
+    this.Notice.UpdatedBy = this.staffLogin.StaffLoginId;
+    if (this.formNotice.invalid) {
+      this.toastr.error("Fill all the required fields !!")
+      return
     }
-  
-    DeleteNotice(obj: any) {
+    var obj: RequestModel = {
+      request: this.localService.encrypt(JSON.stringify(this.Notice)).toString()
+    }
+    this.service.SaveNotice(obj).subscribe(r1 => {
+      let response = r1 as any
+      if (response.Message == ConstantData.SuccessMessage) {
+        if (this.Notice.NoticeId > 0) {
+          this.toastr.success("Notice detail updated successfully")
+          $('#staticBackdrop').modal('hide')
+        } else {
+          this.toastr.success("Notice added successfully")
+        }
+        this.resetForm()
+        this.GetNoticList()
+      } else {
+        this.toastr.error(response.Message)
+      }
+    }, (err => {
+      this.toastr.error("Error occured while submitting data")
+    }))
+  }
+
+  DeleteNotice(obj: any) {
     if (confirm("Are your sure you want to delete this recored")) {
       var request: RequestModel = {
         request: this.localService.encrypt(JSON.stringify(obj)).toString()
@@ -160,15 +170,15 @@ constructor(
     }
   }
 
-    editNotice(obj: any) {
+  editNotice(obj: any) {
     this.resetForm()
     this.Notice = obj
 
   }
 
-   getStaffList() {
+  getStaffList() {
     var obj: RequestModel = {
-      request: this.localService.encrypt(JSON.stringify({ })).toString()
+      request: this.localService.encrypt(JSON.stringify({})).toString()
     }
     this.dataLoading = true
     this.service.getStaffList(obj).subscribe(r1 => {
@@ -184,6 +194,79 @@ constructor(
       this.dataLoading = false;
     }))
   }
+
+//   imageUrl = ConstantData.getBaseUrl();
+//   AttachmentsPhoto: any;
+//   setAttachments(event: any) {
+//   var file: File = event.target.files[0];
+//   if (!ConstantData.allowedFileTypes.includes(file.type)) {
+//     this.toastr.error("Invalid file format !!");
+//     this.Notice.Attachments = '';
+//     this.Notice.AttachmentsName = '';
+//     return;
+//   }
+
+//   if (file.size < 512000) {
+//     this.Notice.AttachmentsName = file.name;
+//     this.Notice.FileFormat = ConstantData.getFileExtension(file.name);
+//     var reader = new FileReader();
+//     reader.readAsDataURL(file);
+
+//     reader.addEventListener('load', (e1: any) => {
+//       var dataUrl = e1.target.result;
+//       var base64Data: string = dataUrl.substr(dataUrl.indexOf('base64,') + 'base64,'.length);
+//       this.Notice.Attachments = base64Data;
+
+//       if (file.type.startsWith('image/')) {
+//         this.AttachmentsPhoto = `data:${file.type};base64,${base64Data}`;
+//       } else if (file.type == 'application/pdf') {
+//         this.AttachmentsPhoto = 'assets/pdf-icon.png';  // ✅ Use some PDF icon for display
+//       } else {
+//         this.AttachmentsPhoto = 'assets/file-icon.png';  // ✅ Generic icon for DOC/DOCX
+//       }
+//     });
+
+//   } else {
+//     this.Notice.Attachments = '';
+//     this.Notice.AttachmentsName = '';
+//     this.toastr.error("File size should be less than 500 KB.");
+//   }
+// }
+
+
+imageUrl = ConstantData.getBaseUrl();
+AttachmentsPhoto:any;
+setAttachments(event: any) {
+  var file: File = event.target.files[0];
+  if (!ConstantData.allowedFileTypes.includes(file.type)) {
+    this.toastr.error("Invalid file format !!");
+    this.Notice.Attachments = '';
+    this.Notice.AttachmentsName = '';
+    if (this.Notice.Attachments)
+    this.AttachmentsPhoto = this.imageUrl + this.Notice.Attachments;
+    return;
+  }
+  if (file.size < 512000) {
+    this.Notice.AttachmentsName = file.name;
+    this.Notice.FileFormat = ConstantData.getFileExtension(file.name);
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.addEventListener('load', (e1: any) => {
+      var dataUrl = e1.target.result;
+      var base64Data: string = dataUrl.substr(dataUrl.indexOf('base64,') + 'base64,'.length);
+      this.Notice.Attachments = base64Data;
+      this.AttachmentsPhoto = `data:image/png;base64,${base64Data}`;
+    });
+
+  } else {
+    if (this.Notice.Attachments)
+    this.AttachmentsPhoto = this.imageUrl + this.Notice.Attachments;
+    this.Notice.Attachments = '';
+    this.Notice.AttachmentsName = '';
+    this.toastr.error("File size should be less than 500 KB.");
+  }
+}
+
 
 
 
