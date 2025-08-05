@@ -107,6 +107,18 @@ export class AppService {
   }
 
   /////////////////////////////////////////////////
+
+                                        //SelfLead Routing
+
+  getSelfLeadList(obj:any){
+    return this.http.post(this.apiUrl+"SelfLead/SelfLeadList",obj,{headers:this.headers});
+  }
+  saveSelfLead(obj:any){
+    return this.http.post(this.apiUrl+"SelfLead/SaveSelfLead",obj,{headers:this.headers});
+  }
+
+  
+  /////////////////////////////////////////////////
   getImageUrl(): string {
     return ConstantData.getBaseUrl();
   }
