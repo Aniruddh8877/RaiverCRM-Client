@@ -116,7 +116,7 @@
                                         <mat-form-field appearance="outline" class="col-sm-12">
                                              <mat-label>Staff Name</mat-label>
                                              <mat-select name="StaffId" [(ngModel)]="Notice.StaffId" #StaffId="ngModel">
-                                                  <mat-option>All Staff</mat-option>
+                                                  <!-- <mat-option>All Staff</mat-option> -->
                                                   <mat-option *ngFor="let Staff of StaffList" [value]="Staff.StaffId">
                                                        {{ Staff.StaffName }}
                                                   </mat-option>

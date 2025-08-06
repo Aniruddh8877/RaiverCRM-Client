@@ -47,6 +47,7 @@ import { ResignationDetailComponent } from './admin/resignation-detail/resignati
 import { SalalyManagementComponent } from './admin/salaly-management/salaly-management.component';
 import { NoticeComponent } from './admin/notice/notice.component';
 import { SelfLeadComponent } from './admin/self-lead/self-lead.component';
+import { RevnueComponent } from './admin/revnue/revnue.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { SelfLeadComponent } from './admin/self-lead/self-lead.component';
     ResignationDetailComponent,
     SalalyManagementComponent,
     NoticeComponent,
-    SelfLeadComponent
+    SelfLeadComponent,
+    RevnueComponent
   ],
   imports: [
     BrowserModule,

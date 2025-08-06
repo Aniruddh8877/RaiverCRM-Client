@@ -1,1 +1,265 @@
-<p>self-lead works!</p>
+<app-progress *ngIf="dataLoading"></app-progress>
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+     <div class="row">
+          <div class="pagetitle dashboard col-sm-8">
+               <h1>{{action.MenuTitle}}</h1>
+               <nav>
+                    <ol class="breadcrumb">
+                         <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+                         <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+                         <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+                    </ol>
+               </nav>
+          </div>
+          <div class="col-sm-4">
+               <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="resetForm()">New
+                    Self Lead</button>
+          </div>
+     </div>
+
+     <section class="section dashboard">
+          <div class="card">
+               <div class="card-body ">
+                    <div class="dataTable-top">
+                         <div class="dataTable-dropdown d-flex">
+                              <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                                   <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                              </select>
+                              <span class="ms-2">Entries per page</span>
+                         </div>
+                         <div class="dataTable-search">
+                              <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                                   placeholder="Search..." type="text">
+                         </div>
+                    </div>
+                    <div class="table-container overflow-auto">
+                         <table class="table table-bordered table-hover">
+                              <thead>
+                                   <tr>
+                                        <th>S.No</th>
+                                        <th (click)="sort('StaffName')">Staff Name</th>
+                                        <th (click)="sort('StaffCode')">Staff Code</th>
+                                        <th (click)="sort('LeadDate')">Lead date </th>
+                                        <th (click)="sort('LeadCategoryName')">Lead Cateogry Name</th>
+                                        <th (click)="sort('StaffType')">Lead Name</th>
+                                        <!-- <th (click)="sort('FatherName')">Father's Name</th> -->
+                                        <th (click)="sort('MobileNo')">Mobile No</th>
+                                        <th (click)="sort('MobileNo')">Amount Quoted</th>
+                                        <th (click)="sort('AlternateNo')">Final Amount</th>
+                                        <th (click)="sort('Email')">Payment Mode</th>
+                                        <!-- <th (click)="sort('DOB')">DOB</th> -->
+                                        <!-- <th (click)="sort('Gender')">Gender</th> -->
+                                        <!-- <th (click)="sort('Qualification')">Qualification</th> -->
+                                        <th (click)="sort('FullAddress')">Account No</th>
+                                        <th (click)="sort('JoinDate')">Transaction No</th>
+                                        <!-- <th (click)="sort('DepartmentName')">Department</th> -->
+                                        <th (click)="sort('Status')">Status</th>
+                                        <th *ngIf="canShowEditButton()">Edit</th>
+                                        <!-- <th *ngIf="action.CanDelete">Delete</th> -->
+                                   </tr>
+                              </thead>
+                              <tbody>
+                                   <tr
+                                        *ngFor="let item of SelfLeadList |filter:Search:true|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                                        <td>{{(itemPerPage * (p -1)) +i+ 1}}</td>
+                                        <td>{{item.StaffName}}</td>
+                                        <td>{{item.StaffCode}}</td>
+                                        <td>{{item.LeadDate|date:"dd-MM-yy"}}</td>
+                                        <!-- <td>{{AllStaffTypeList[item.StaffType]|enumCase}}</td> -->
+                                        <td>{{item.LeadCategoryName}}</td>
+                                        <td>{{item.ProspectName}}</td>
+                                        <td>{{item.MobileNo}}</td>
+                                        <td>{{item.AmountQuoted}}</td>
+                                        <td>{{item.FinalAmount}}</td>
+                                        <td>{{AllPaymentModeList[item.PaymentMode]}}</td>
+                                        <!-- <td style="white-space:nowrap">{{item.DOB | date: "dd-MM-yy"}}</td> -->
+                                        <!-- <td>{{AllGenderList[item.Gender]}}</td> -->
+                                        <td>{{item.AccountNo}}</td>
+                                        <td>{{item.TransactionNo}}</td>
+                                        <!-- <td style="white-space:nowrap">{{item.JoinDate | date: "dd-MM-yy"}}</td> -->
+                                        <!-- <td>{{item.DepartmentName}}</td> -->
+                                        <td>
+                                             <span class="p-1 badge" [ngClass]="
+                                                    item.SelfLeadStatus == 1 ? 'text-bg-warning' :
+                                                    item.SelfLeadStatus == 2 ? 'text-bg-danger' :
+                                                    item.SelfLeadStatus == 3 ? 'text-bg-info' :
+                                                    item.SelfLeadStatus == 4 ? 'text-bg-success' :
+                                                   'text-bg-secondary'">
+                                                  {{ AllStatusList[item.SelfLeadStatus] }}
+                                             </span>
+                                        </td>
+
+                                        <td *ngIf="canShowEditButton()">
+                                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                  data-bs-target="#staticBackdrop" (click)="editSelfLead(item)">
+                                                  <i class="bi bi-pencil-square"></i>
+                                             </button>
+                                        </td>
+
+                                   </tr>
+                              </tbody>
+                         </table>
+                    </div>
+                    <div class="dataTable-bottom ">
+                         <pagination-controls (pageChange)="onTableDataChange($event)"
+                              class="pagination justify-content-end"></pagination-controls>
+                    </div>
+               </div>
+          </div>
+
+     </section>
+
+
+     <div *ngIf="action.CanEdit || action.CanCreate" class="modal fade modal-lg" id="staticBackdrop"
+          data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+               <div class="modal-content">
+                    <div class="modal-header">
+                         <h1 class="modal-title fs-5" id="staticBackdropLabel">{{SelfLead.SelfLeadId > 0 ?
+                              'Update':'New'}}
+                              Self Lead
+                         </h1>
+                         <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                              (click)="resetForm()"></button>
+                    </div>
+                    <div class="modal-body">
+                         <form #formSelfLead="ngForm" class="d-flex justify-content-evenly flex-wrap">
+                              <div class="container">
+
+                                   <div class="row">
+
+                                        <!--designation-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>Lead Category</mat-label>
+                                             <mat-select #LeadCategoryId="ngModel" name="LeadCategoryId"
+                                                  [(ngModel)]="SelfLead.LeadCategoryId" required autofocus>
+                                                  <mat-option *ngFor="let option of LeadCategoryList"
+                                                       (onSelectionChange)="SelfLead.LeadCategoryId = option.LeadCategoryId"
+                                                       [value]="option.LeadCategoryId">
+                                                       {{option.LeadCategoryName}}
+                                                  </mat-option>
+                                             </mat-select>
+                                             <mat-error
+                                                  *ngIf="(LeadCategoryId.dirty  || LeadCategoryId.touched) || (LeadCategoryId.invalid && isSubmitted)">
+                                                  Lead Category is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+
+
+                                        <!--Prospect Name-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>Lead Name</mat-label>
+                                             <input matInput #ProspectName="ngModel" name="ProspectName"
+                                                  [(ngModel)]="SelfLead.ProspectName" required autofocus>
+                                             <mat-error
+                                                  *ngIf="(ProspectName.dirty  || ProspectName.touched) || (ProspectName.invalid && isSubmitted)">
+                                                  Prospect Name is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+                                        <!--mobile-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>Mobile No</mat-label>
+                                             <input type="number" matInput #MobileNo="ngModel" name="MobileNo"
+                                                  [(ngModel)]="SelfLead.MobileNo" required autofocus maxlength="10"
+                                                  pattern="[0-9]{10}">
+                                             <mat-error
+                                                  *ngIf="(MobileNo.dirty  || MobileNo.touched) || (MobileNo.invalid && isSubmitted)">
+                                                  Mobile No is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+
+                                        <!--Amount Quoted-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>Amount Quoted</mat-label>
+                                             <input matInput #AmountQuoted="ngModel" name="AmountQuoted"
+                                                  [(ngModel)]="SelfLead.AmountQuoted" required autofocus>
+                                             <mat-error
+                                                  *ngIf="(AmountQuoted.dirty  || AmountQuoted.touched) || (AmountQuoted.invalid && isSubmitted)">
+                                                  Amount Quoted is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+                                        <!--Final Amount-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>Final Amount</mat-label>
+                                             <input matInput #FinalAmount="ngModel" name="FinalAmount"
+                                                  [(ngModel)]="SelfLead.FinalAmount" autofocus>
+                                             <mat-error
+                                                  *ngIf="(FinalAmount.dirty  || FinalAmount.touched) || (FinalAmount.invalid && isSubmitted)">
+                                                  Final Amount is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+
+                                        <!-- Payment Mode -->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group">
+                                             <mat-label>PaymentMode</mat-label>
+                                             <mat-select #PaymentModeRef="ngModel" name="PaymentMode"
+                                                  (selectionChange)="onPaymentModeChange($event.value)"
+                                                  [(ngModel)]="SelfLead.PaymentMode" required>
+                                                  <mat-option [value]="PaymentMode.Key"
+                                                       *ngFor="let PaymentMode of PaymentModeList">
+                                                       {{ PaymentMode.Value }}
+                                                  </mat-option>
+                                             </mat-select>
+                                             <mat-error
+                                                  *ngIf="(PaymentModeRef.dirty || PaymentModeRef.touched) || (PaymentModeRef.invalid && isSubmitted)">
+                                                  PaymentMode is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+
+                                        <!-- Show Account No only when PaymentMode is CHEQUE (3) -->
+                                        <mat-form-field *ngIf="SelfLead.PaymentMode == 3" appearance="outline"
+                                             class="col-sm-3 form-group">
+                                             <mat-label>Account No.</mat-label>
+                                             <input matInput #AccountNo="ngModel" name="AccountNo"
+                                                  [(ngModel)]="SelfLead.AccountNo" />
+                                        </mat-form-field>
+
+                                        <!-- Show Transaction No only when PaymentMode is ONLINE (2) -->
+                                        <mat-form-field *ngIf="SelfLead.PaymentMode == 2" appearance="outline"
+                                             class="col-sm-3 form-group">
+                                             <mat-label>Transaction No.</mat-label>
+                                             <input matInput #TransactionNo="ngModel" name="TransactionNo"
+                                                  [(ngModel)]="SelfLead.TransactionNo" />
+                                        </mat-form-field>
+
+
+
+
+
+                                        <!--SelfLeadStatus-->
+                                        <mat-form-field appearance="outline" class="col-sm-3 form-group"
+                                             *ngIf="canShowEditButton()">
+                                             <mat-label>Self Lead Status</mat-label>
+                                             <mat-select #SelfLeadStatus="ngModel" name="SelfLeadStatus"
+                                                  [(ngModel)]="SelfLead.SelfLeadStatus" required>
+                                                  <mat-option [value]="SelfLeadStatus.Key"
+                                                       *ngFor="let SelfLeadStatus of SelfLeadStatusList">{{SelfLeadStatus.Value}}</mat-option>
+                                             </mat-select>
+                                             <mat-error
+                                                  *ngIf="(SelfLeadStatus.dirty  || SelfLeadStatus.touched) || (SelfLeadStatus.invalid && isSubmitted)">
+                                                  Status is <strong>required</strong>
+                                             </mat-error>
+                                        </mat-form-field>
+                                   </div>
+
+                              </div>
+
+                         </form>
+                    </div>
+                    <div class="modal-footer mt-2">
+                         <button type="button" mat-raised-button color="warn" class="me-2" data-bs-dismiss="modal"
+                              (click)="resetForm()">Cancel</button>
+                         <button mat-raised-button color="primary" (click)="saveSelfLead()">{{SelfLead.SelfLeadId >
+                              0 ? 'Update':'Submit'}}</button>
+                    </div>
+               </div>
+          </div>
+     </div>
+</main>

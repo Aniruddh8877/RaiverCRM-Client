@@ -1,5 +1,4 @@
 export enum Category {
-
     General = 1,
     OBC = 2,
     SC = 3,
@@ -30,7 +29,8 @@ export enum BloodGroup {
 export enum Gender {
     Male = 2,
     Female = 1,
-    Other = 3
+    Other = 3,
+    
 }
 export enum StaffType {
     SuperAdmin = 1,
@@ -47,11 +47,11 @@ export enum BookingType {
     Enquiry = 2
 }
 export enum PaymentMode {
-    CASH = 1,
-    ONLINE = 2,
-    CHEQUE = 3,
+    Cash = 1,
+    Online  = 2,
+    Cheque = 3,
     DD = 5,
-    OTHERS = 4
+    Other = 4
 }
 export enum BillStatus {
     Paid = 1,
@@ -138,4 +138,11 @@ export enum Months {
     October = 10,
     November = 11,
     December = 12
+}
+
+export enum SelfLeadStatus{
+    Pending = 1,
+    Closed = 2,
+    FollowUp = 3,
+    Approved = 4,
 }
