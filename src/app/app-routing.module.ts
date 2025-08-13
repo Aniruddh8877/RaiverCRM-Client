@@ -27,6 +27,7 @@ import { ResignationDetailComponent } from './admin/resignation-detail/resignati
 import { SalalyManagementComponent } from './admin/salaly-management/salaly-management.component';
 import { NoticeComponent } from './admin/notice/notice.component';
 import { SelfLeadComponent } from './admin/self-lead/self-lead.component';
+import { RevnueComponent } from './admin/revnue/revnue.component';
 
 const routes: Routes = [
   { path: '', redirectTo: "/admin-login", pathMatch: 'full' },
@@ -59,6 +60,7 @@ const routes: Routes = [
       {path:'Notice',component:NoticeComponent},
       {path:'SalalyManagement',component:SalalyManagementComponent},
       {path:'SelfLead',component:SelfLeadComponent},
+      {path:'Revenue',component:RevnueComponent},
       
     ]
   },

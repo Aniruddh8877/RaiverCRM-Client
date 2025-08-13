@@ -125,10 +125,38 @@ export class AdminMasterComponent implements OnInit {
     }
 
   }
+getlogOut() {
+  const logoutData = {
+    UserName: this.staffLogin.UserName, // from stored login details
+    LoginLogId: this.staffLogin.StaffLoginId // pass this to update logout time
+  };
 
-  logOut() {
-    this.localService.removeEmployeeDetail();
-    this.router.navigate(['/admin-login']);
-  }
+  const encryptedData = this.localService.encrypt(JSON.stringify(logoutData)).toString();
+  const request = { request: encryptedData };
+
+  this.dataLoading = true;
+  this.service.StaffLogout(request).subscribe({
+    next: (res: any) => {
+      if (res.Message === ConstantData.SuccessMessage) {
+        console.log("Logout saved:", res);
+        this.localService.removeEmployeeDetail();
+        localStorage.clear();
+        this.router.navigate(['/admin-login']);
+      } else {
+        this.toastr.error(res.Message);
+      }
+      this.dataLoading = false;
+    },
+    error: (err) => {
+      console.error(err);
+      this.toastr.error("Error while logging out");
+      this.dataLoading = false;
+    }
+  });
+}
+
+
+
+  
 
 }

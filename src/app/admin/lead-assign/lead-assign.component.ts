@@ -40,6 +40,7 @@ export class LeadAssignComponent {
     LeadMobileNo: '',
     LeadComment: ''
   };
+  Sum: any;
   
   
   constructor(
@@ -151,7 +152,11 @@ export class LeadAssignComponent {
       (r1: any) => {
         let response = r1;
         if (response.Message === ConstantData.SuccessMessage) {
-          this.leadList = response.LeadDeatilList;
+          this.leadList = response.LeadDetailList;
+          this.Sum = response.Sum;
+          console.log("Fetched Lead D     asetail List:", this.leadList);
+          console.log("Fetched sum of lead remve kjads;lfkjalds:", this.Sum);
+          
         } else {
           this.toastr.error(response.Message);
         }

@@ -102,7 +102,7 @@ export class LeadDetailComponent {
       LeadComment: '',
       Comment: '',
       LeadStatus: 1,
-      FollowUpDate: new Date(),
+      FollowUpDate: Date.now(),
     };
     if (this.formLeadDetail) {
       this.formLeadDetail.resetForm();
@@ -144,7 +144,7 @@ export class LeadDetailComponent {
       (r1: any) => {
         let response = r1;
         if (response.Message === ConstantData.SuccessMessage) {
-          this.LeadDetailList = response.LeadDeatilList;
+          this.LeadDetailList = response.LeadDetailList;
           console.log("Fetched Lead Detail List:", this.LeadDetailList);
         } else {
           this.toastr.error(response.Message);

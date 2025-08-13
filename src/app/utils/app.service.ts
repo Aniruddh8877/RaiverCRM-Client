@@ -40,12 +40,15 @@ export class AppService {
   /////////////////////////////////////////////////////
 
   getLeadDetailsList(obj: any) {
-    return this.http.post(this.apiUrl + "LeadDetial/LeadDetailList", obj, { headers: this.headers })
+    return this.http.post(this.apiUrl + "LeadDetail/LeadDetailList", obj, { headers: this.headers })
   }
   SaveLeadDetail(obj: any) {
-    return this.http.post(this.apiUrl + "LeadDetial/SaveLeadDetail", obj, { headers: this.headers })
+    return this.http.post(this.apiUrl + "LeadDetail/SaveLeadDetail", obj, { headers: this.headers })
   }
 
+  getLeaveDetailRevenueList(obj: any) {
+    return this.http.post(this.apiUrl + "LeadDetail/LeadDetailRevenueList", obj, { headers: this.headers });
+  }
   /////////////////////////////////////////////////////
 
   SaveLeaveRequest(obj: any) {
@@ -58,6 +61,7 @@ export class AppService {
 
 
   /////////////////////////////////////////////////////
+
   getLeaveDetailList(obj: any) {
     return this.http.post(this.apiUrl + "LeaveDetail/LeaveDetailList", obj, { headers: this.headers });
   }
@@ -108,16 +112,23 @@ export class AppService {
 
   /////////////////////////////////////////////////
 
-                                        //SelfLead Routing
+  //SelfLead Routing
 
-  getSelfLeadList(obj:any){
-    return this.http.post(this.apiUrl+"SelfLead/SelfLeadList",obj,{headers:this.headers});
+  getSelfLeadList(obj: any) {
+    return this.http.post(this.apiUrl + "SelfLead/SelfLeadList", obj, { headers: this.headers });
   }
-  saveSelfLead(obj:any){
-    return this.http.post(this.apiUrl+"SelfLead/SaveSelfLead",obj,{headers:this.headers});
+  saveSelfLead(obj: any) {
+    return this.http.post(this.apiUrl + "SelfLead/SaveSelfLead", obj, { headers: this.headers });
   }
 
-  
+
+  /////////////////////////////////////////////////
+
+  //  Revenue Routing
+
+  saveRevenue(obj: any) {
+    return this.http.post(this.apiUrl + "Revenue/saveRevenue", obj, { headers: this.headers });
+  }
   /////////////////////////////////////////////////
   getImageUrl(): string {
     return ConstantData.getBaseUrl();
@@ -197,6 +208,9 @@ export class AppService {
   // Staff Login
   StaffLogin(obj: any) {
     return this.http.post(this.apiUrl + "StaffLogin/StaffLogin", obj, { headers: this.headers })
+  }
+  StaffLogout(obj: any) {
+    return this.http.post(this.apiUrl + "StaffLogin/StaffLogout", obj, { headers: this.headers });
   }
 
   getStaffLoginList(obj: any) {

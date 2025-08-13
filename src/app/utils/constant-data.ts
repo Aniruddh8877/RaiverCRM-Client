@@ -9,6 +9,7 @@ export class ConstantData {
     public static BoolList = [{ Key: true, Value: "Yes" }, { Key: false, Value: "No" }];
     private static readonly adminKey = "52F4785C-7EE7-426E-A1AE-C2300972E70A";
    public static readonly baseUrl: string = "https://localhost:44302/";
+//    public static readonly baseUrl: string = "https://api.raiver.in/";
     //private static readonly baseUrl: string = "http://192.168.192.39:7777/";
     
     public static getBaseUrl(): string {
