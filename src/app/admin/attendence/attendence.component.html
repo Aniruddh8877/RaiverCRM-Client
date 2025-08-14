@@ -1,0 +1,91 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+<main id="main" class="main" *ngIf="action.ResponseReceived">
+
+     <div class="row">
+          <div class="pagetitle dashboard col-sm-8">
+               <h1>{{action.MenuTitle}}</h1>
+               <nav>
+                    <ol class="breadcrumb">
+                         <li class="breadcrumb-item"><a routerLink="admin/admin-dashboard">Home</a></li>
+                         <li class="breadcrumb-item">{{action.ParentMenuTitle}}</li>
+                         <li class="breadcrumb-item active">{{action.MenuTitle}}</li>
+                    </ol>
+               </nav>
+          </div>
+          <!-- <div class="col-sm-4">
+      <button mat-raised-button color="primary" *ngIf="action.CanCreate" class="float-right"
+        (click)="newDesignation()">New
+        Designation</button>
+    </div> -->
+     </div>
+
+     <section class="section dashboard">
+          <div class="card">
+               <div class="card-body ">
+                    <div style="font-size: 30px; font-weight: 700; color: red;">{{ date | date:'dd-MM-yyyy hh:mm:ss a'
+                         }}</div>
+                    <div class="table-container overflow-auto">
+                         <div class="dataTable-top">
+                              <div class="dataTable-dropdown d-flex">
+                                   <select class="dataTable-selector form-select form-select-sm"
+                                        [(ngModel)]="itemPerPage">
+                                        <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                                   </select>
+                                   <span class="ms-2">Entries per page</span>
+                              </div>
+                              <div class="dataTable-search">
+                                   <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                                        placeholder="Search..." type="text">
+                              </div>
+                         </div>
+
+                         <table class="table table-sm table-bordered table-hover">
+                              <thead>
+                                   <tr>
+                                        <th>S.No</th>
+                                        <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                                        <th style="cursor:pointer;" (click)="sort('StaffName')">StaffName</th>
+                                        <th style="cursor:pointer;" (click)="sort('UserName')">UserName</th>
+                                        <th style="cursor:pointer;" (click)="sort('FirstLogin')">FirstLogin</th>
+                                        <th style="cursor:pointer;" (click)="sort('LastLogout')">LastLogout</th>
+
+                                   </tr>
+                              </thead>
+                              <tbody>
+                                   <tr
+                                        *ngFor="let item of AttendanceList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                                        <td>{{(itemPerPage * (p -1)) +i+ 1}}</td>
+                                        <td>
+                                             <span class="badge"
+                                                  [ngClass]="item.Status === 'Present' ? 'bg-success' : 'bg-danger'">
+                                                  {{item.Status}}
+                                             </span>
+                                        </td>
+                                        <td>{{item.StaffName}}</td>
+                                        <td>{{item.UserName}}</td>
+                                        <td>{{item.FirstLogin|date:'hh:mm:ss a'}}</td>
+                                        <td>{{item.LastLogout|date:'hh:mm:ss a'}}</td>
+                                        <!-- <td *ngIf="action.CanEdit">
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                    (click)="editDesignation(item)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                </td> -->
+                                        <!-- <td *ngIf="action.CanDelete">
+                  <button class="btn btn-sm btn-danger" (click)="deleteDesignation(item)">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </td> -->
+                                   </tr>
+                              </tbody>
+                         </table>
+                         <div class="dataTable-bottom">
+                              <pagination-controls (pageChange)="p=$event" style="float:right;"
+                                   class="my-pagination"></pagination-controls>
+                         </div>
+                    </div>
+               </div>
+          </div>
+
+     </section>
+</main>

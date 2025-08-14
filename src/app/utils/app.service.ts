@@ -130,6 +130,10 @@ export class AppService {
     return this.http.post(this.apiUrl + "Revenue/saveRevenue", obj, { headers: this.headers });
   }
   /////////////////////////////////////////////////
+  getAttendanceList(obj: any) {
+    return this.http.post(this.apiUrl + "Attendance/AttendanceList", obj, { headers: this.headers });
+  }
+  /////////////////////////////////////////////////
   getImageUrl(): string {
     return ConstantData.getBaseUrl();
   }

@@ -48,6 +48,7 @@ import { SalalyManagementComponent } from './admin/salaly-management/salaly-mana
 import { NoticeComponent } from './admin/notice/notice.component';
 import { SelfLeadComponent } from './admin/self-lead/self-lead.component';
 import { RevnueComponent } from './admin/revnue/revnue.component';
+import { AttendenceComponent } from './admin/attendence/attendence.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { RevnueComponent } from './admin/revnue/revnue.component';
     SalalyManagementComponent,
     NoticeComponent,
     SelfLeadComponent,
-    RevnueComponent
+    RevnueComponent,
+    AttendenceComponent
   ],
   imports: [
     BrowserModule,
